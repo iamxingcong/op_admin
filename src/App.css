@@ -1,0 +1,614 @@
+ 
+ *{
+   font-size: 14px;
+   font-family: "Microsoft Yahei" !important;
+ 
+ }
+.App-link {
+  color: #61dafb;
+}
+
+html, body,section,
+.App, #root{
+  min-height: 100%;
+  min-width: 1320px !important;
+  
+}
+.ant-layout-content{
+  margin: 24px;
+  background-color: #ffffff;
+  padding: 15px;
+  min-height: 1200px !important;
+}
+ 
+.ant-table-cell .ant-btn-primary{
+  margin-right: 7px;
+  margin-left: 7px;
+}
+
+ 
+.ant-col-5 button{
+  margin-left: 25px;
+}
+
+select {
+  height: 32px;
+  padding: 4px 11px;
+  color: rgba(0,0,0,.65);
+  font-size: 14px;
+  line-height: 1.5;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #d9d9d9;
+}
+
+
+#basicx label{
+  width: 150px;
+  text-align: right;
+  display: block;
+  float: left;
+  line-height: 32px;
+}
+.itmHidden label{
+  display: none !important;
+}
+.lineh32{
+  line-height: 32px;
+  padding-left: 10px;
+}
+
+
+.rightbtn {
+  float: right;
+  margin-left: 15px;
+}
+
+.borderbtm {
+  border-bottom: 1px solid #e2e2e2;
+  padding-bottom: 15px;
+  line-height: 30px;
+}
+
+.borderbtm button {
+  float: right;
+}
+
+.detailwrap  .ant-row {
+  padding-top: 10px;
+}
+.detailwrap{
+   
+  margin-bottom: 15px;
+ 
+}
+#capacitycontainer .ant-table{
+  margin-top: 15px;
+}
+table{
+  text-align: center;
+}
+
+span i{
+  font-style: normal;
+  cursor: pointer;
+  padding: 15px;
+}
+
+#StreamingMedia  .ant-input-number,
+#staticsResource  .ant-input-number{
+  width: 90%;
+}
+#StreamingMedia input,
+#staticsResource input,
+#IasDetail input{
+ text-align: left;
+}
+
+#IasDetail  .ant-input-number{
+    width: calc(100% - 30px) !important;
+}
+
+.tipsx{
+  line-height: 32px;
+  padding-left: 15px;
+  color: #ff4d4f;
+}
+
+.anticon-plus-circle path{
+  color: #409eff;
+  fill:  #409eff;
+}
+.anticon-minus-circle path{
+  color: #ff4d4f;
+  fill: #ff4d4f;
+}
+
+
+#capacitycontainer .title{
+   line-height: 32px;
+   height: 32px;
+   display: block;
+   float: left;
+}
+#capacitycontainer .rightdivs{
+  float: right;
+  display: block;
+}
+
+ .rightdivs button{
+   margin-left: 25px;
+ }
+
+ #capacitycontainer  .inputbtns{
+    display: block;
+    float: right;
+ }
+ #capacitycontainer  .ant-table-footer{
+   overflow: auto;
+ }
+
+ .nameclickd .anticon svg{
+   font-size: 12px !important;
+ }
+
+ .nameclickd .anticon{
+ 
+   position: absolute;
+   left: 15px;
+   border: 1px solid #f0f0f0;
+ }
+
+ #OTTDetail  .btna,  #OTTDetail .btnb{
+   display: block;
+   float: right;
+   margin-left: 25px;
+   margin-bottom: 17px;
+ }
+ #OTTDetail   .ant-row{
+    display: block;
+  }
+
+.btnwrap{
+  position: absolute;
+  right: 0px;
+  top: 0px;
+}
+.ant-tabs-tab-btn{
+  font-weight: 500;
+}
+
+#listlist .ant-table-wrapper{
+  margin-top: 25px;
+}
+
+#divwrapott{
+  display: block;
+  position: absolute;
+  top: -60px;
+  right: 0px;
+}
+#OTTDetail{
+  position: relative;
+}
+.logo{
+  height: 64px;
+  display: block;
+  text-align: center;
+}
+.logo span{
+  width: 64px;
+  height: 64px;
+   
+}
+.logo span svg{
+  width: 50%;
+  height: 50%;
+  color: #fff;
+  margin-top: 25%;
+}
+
+.ant-table-container{
+  border-top: 1px solid #e5e5e5;
+  border-left: 1px solid #e5e5e5;
+  border-right: 1px solid #e5e5e5;
+  border-bottom: none;
+}
+
+.ant-table-tbody tr:nth-child(2n) {
+  background-color: #fbfbfb;
+}
+
+.ant-table-footer .ant-form-item-control-input-content{
+  text-align: center;
+}
+
+#checklist  .anticon-check-circle svg{
+  background-color: #409eff;
+  color: #fff;
+  border-radius: 25px;
+ 
+  height: 25px;
+  width: 25px;
+}
+
+#checklist .anticon-question-circle svg{
+  width: 20px;
+  height: 20px;
+}
+
+.ant-table-footer  .ant-form-item{
+  margin-bottom: 0px !important;
+}
+
+.ant-select-selector{
+  text-align: left;
+}
+
+#basicx .ant-input-number{
+  width: 100% !important;
+}
+
+#OTTDetail .ant-pagination{
+    display: none !important;
+    font-size: 0.9em;
+}
+
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #409eff !important;
+ 
+}
+
+
+
+#capacitycontainer .detailwrap {
+  border-bottom: 1px solid #e2e2e2;
+  padding-bottom: 15px;
+}
+
+
+
+#OTTDetail .ant-input-number,
+#capacitycontainer .ant-input-number{
+  width: 200px !important;
+}
+
+.detailwrap   .ant-input-number,
+.detailwrap .ant-select-selector{
+  width: 250px !important;
+}
+.detailwrap  span{
+  line-height: 32px;
+}
+.detailwrap label{
+  float: left;
+  line-height: 32px;
+  
+}
+
+#btnright button{
+  float: right;
+}
+
+.ant-table-placeholder  .ant-empty-normal{
+  display: none !important;
+}
+.ant-table-placeholder  .ant-table-cell{
+  padding: 0px !important;
+}
+.deliconsitm,
+#addicons{
+  line-height: 32px;
+}
+.deliconsitm .anticon,
+#addicons .anticon{
+  margin-left: 15px;
+  cursor: pointer;
+}
+
+.addeditms .ant-cascader-picker{
+  width: 386px !important;
+  float: right;
+}
+#StreamingMedia .ant-table-cell input,
+#staticsResource .ant-table-cell input,
+#IasDetail .ant-table-cell input{
+  text-align: left;
+}
+.brespans span{
+  display: block;
+  clear: both;
+}
+.namelength440{
+  text-overflow: ellipsis;
+  height: 32px;
+  line-height: 32px;
+  max-width: 430px;
+  overflow: hidden;
+  display: block;
+  white-space:nowrap;
+}
+.editeditms  .ant-cascader-picker{
+  display: block;
+  width: 386px !important;
+  float: right;
+}
+.detailwrap .anticon-copy{
+  display: block;
+  float: left;
+  color: #6293e2;
+  cursor: pointer;
+  margin-left: 7px;
+  font-size: 10px;
+  margin-top: 9px;
+  line-height: 15px;
+
+  }
+.detailwrap .anticon-question-circle{
+ 
+   margin-left: 3px;
+}
+.leftflt{
+  float: left;
+}
+.leftflt span{
+  float: left
+}
+
+.ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected {
+  color: #fff;
+  background-color: #1872ff !important;
+  border-color: #1872ff !important;
+
+}
+.ant-btn-primary,
+.el-button--primary {
+  color: #fff;
+  background-color: #1872ff !important;
+  border-color: #1872ff !important;
+  border-radius: 3px;
+
+}
+.tbfootsix tr td{
+
+  display: table-cell;
+  vertical-align: inherit;
+  width: 16.6%;
+  text-align: center;
+
+}
+.tbfootertds4 tr td .ant-col{
+  max-width: 93% !important;
+}
+.tbfootertds4 tr td{
+  
+    display: table-cell;
+    vertical-align: inherit;
+    width: 25%;
+    text-align: center;
+ 
+}
+.tbfootertds tr td{
+    display: table-cell;
+    vertical-align: inherit;
+    width: 20%;
+    text-align: center;
+}
+.tbfootsix tr td .ant-col{
+  max-width: 95% !important;
+}
+.tbfootsix tr td{
+  width: 16.6% !important;
+}
+ 
+
+.ant-table-footer{
+  border-bottom: 1px solid #f0f0f0;
+  border-left:  1px solid #f0f0f0;
+  border-right:  1px solid #f0f0f0;
+}
+
+td .ant-form-item{
+  margin-bottom: 0px !important;
+}
+
+.detailwrap .ant-col-8,
+.detailwrap  .ant-row .ant-col{
+  line-height: 32px;
+}
+
+.ant-table-row-level-1 .ant-table-cell-ellipsis,
+.ant-table-row-level-1 .nameclickd{
+  text-align: right;
+  
+}
+.ant-table-row-level-1 .ant-table-cell-ellipsis,
+.ant-table-row-level-1 .nameclickd span{
+  font-weight: 200;
+}
+
+.editeditms .ant-form-item-explain,
+.addeditms  .ant-form-item-explain{
+  width: 386px;
+  display: block;
+  float: right;
+  text-align: left;
+  margin-left: 150px;
+}
+
+ 
+#OTTDetail .ant-spin-spinning {
+   
+  left: 50%;
+  position: absolute;
+  top: 90px;
+  z-index: 20000;
+}
+
+#listlist .ant-col-5 .ant-btn-primary{
+  float: right;
+}
+
+.ant-picker-input>input:placeholder-shown{
+  text-align: center !important;
+}
+
+.specialsp label{
+  width: 130px !important;
+}
+.specialspz label{
+  width: 80px !important;
+}
+#capacitycontainer .ant-table-pagination{
+  display: none !important;
+}
+
+#StreamingMedia .ant-table-cell .ant-btn .anticon{
+  margin-left: 7px;
+}
+
+ #StreamingMedia .tbfootertds  .ant-btn-primary{
+   margin-left: 17px;
+ }
+ .nameclickd button{
+   margin-left: -24px;
+   float: left;
+   cursor: pointer;
+ }
+ .ant-table-row-indent button{
+   cursor: pointer;
+ }
+ .nameclickd span{
+   margin-left: -20px;
+ }
+ .ant-table-row-indent button, 
+ .ant-table-row-indent span{
+   float: left;
+ }
+ .nameclickd{
+   margin-left: 25px;
+ }
+ .ant-table-row-expand-icon:focus, .ant-table-row-expand-icon:hover{
+   color: #000000 !important;
+   border-color:  #f0f0f0 !important;
+ }
+ 
+ .ant-table-row-expand-icon:focus, .ant-table-row-expand-icon:hover, .ant-table-row-expand-icon:active{
+  border-color:  #f0f0f0 !important;
+ }
+
+ .leftdivs #wrapx button{
+   margin-left: 15px;
+   float: left;
+ }
+.leftdivs .ant-input-number{
+  float: left;
+}
+
+.leftdivs .anticon-question-circle {
+ 
+  margin-left: 3px;
+}
+.leftdivs  #wrapx span{
+  float: left;
+  line-height: 32px;
+  margin-right: 3px;
+}
+.leftdivs button{
+  margin-left: 25px;
+  margin-top: 4px;
+  float: left;
+}
+
+#eventtypeid{
+  margin-top: 15px;
+}
+
+#specialhrefs .ant-form-item-label, 
+#specialhrefs .ant-form-item{
+  display: block;
+  float: left;
+}
+#specialhrefs .ant-form-item{
+  width: 922px;
+}
+.eventtypequest .anticon-question-circle{
+  margin-top: 10px;
+}
+#capacitydetailhref{
+  margin-left: 15px;
+  float: left;
+}
+#capacitydetailhref a,
+#capacitydetailhref span{
+
+  font-size: 0.8em;
+}
+#capacitycontainer .anticon-question-circle svg,
+#basicx .anticon-question-circle svg{
+  font-size: 11px !important;
+}
+
+#capacitycontainer .ant-table-row-level-1{
+  font-weight: 200 !important;
+}
+
+.numericinput .ant-tooltip-inner{
+  width: 500px;
+}
+
+#capacitycontainer .ant-table tr td .ant-input-number-input{
+  text-align: center;
+}
+.expandinputct .ant-input-number-input{
+  text-align: center !important;
+}
+
+#btntipsx{
+  line-height: 32px;
+  margin-left: 10px;
+}
+
+.sixcharacter{
+  width: 100px;
+  float: left;
+}
+#listlist .ant-tabs-tab,
+#capacitycontainer  .ant-tabs-tab{
+  padding: 12px  15px;
+}
+
+
+#eventlistspecialbtns{
+  width: 100px;
+  display: block;
+  position: absolute;
+  right: 0px;
+  top: 11px;
+
+}
+
+#listlist  .ant-col-8  button{
+  float: right;
+}
+
+.expandcrsinput .ant-tooltip-inner {
+  width: 610px;
+}
+.ant-notification-topCenter .ant-notification-notice{
+  position: fixed !important;;
+  top: 8px !important;
+  left: 50% !important;
+  margin-left:  -192px !important;
+}
+tr[data-row-key="more"]{
+  height: 32px;
+}
+tr[data-row-key="more"] td:not(.ant-table-cell-with-append){
+  
+  display: none;
+}
+
+tr[data-row-key="more"] .ant-table-cell-with-append{
+  text-align: center !important;
+}
