@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Button, Modal, Form, Input, Select, Row, Col,   InputNumber, Cascader, notification, Spin } from 'antd';
- 
+import { Button, Modal, Form, Input, Select, Row, Col, DatePicker, InputNumber, Cascader, notification, Spin } from 'antd';
+import moment from 'moment';
 import axios from "axios";
 
 import { APIURL } from '../../common/constdt.js';
@@ -25,7 +25,7 @@ let ct = 0;
 let tem = [];
 let okt = [];
 
-class CreateEvent extends React.Component {
+class CreateEventHand extends React.Component {
 
 
     constructor(props) {
@@ -44,7 +44,7 @@ class CreateEvent extends React.Component {
             eventChain: null,
        
             event_name: "",
-            event_type: 2,
+            event_type: 1,
             event_users: "",
             pid: "",
             event_desc: null,
@@ -57,7 +57,7 @@ class CreateEvent extends React.Component {
             capacity_quota: "",
             unit_capacity: 0,
             capacity_pre_value: 0.0,
-            delay_time: 0,
+            reduce_time: 0,
             link_info: null,
             alink_info: null,
             blink_info: null,
@@ -73,6 +73,7 @@ class CreateEvent extends React.Component {
 
         this.onChangetm = this.onChangetm.bind(this)
         this.onChangetmb = this.onChangetmb.bind(this)
+        this.onChangetmc = this.onChangetmc.bind(this);
         this.onOk = this.onOk.bind(this)
         this.onChangea = this.onChangea.bind(this)
         this.linkinfcarray = this.linkinfcarray.bind(this)
@@ -88,12 +89,13 @@ class CreateEvent extends React.Component {
             btndisabled: false,
         })
        
-       
+        
     }
-
 
     
 
+
+    
     unitcapacity(v){
        
         let vt = parseInt(v.target.value)
@@ -148,7 +150,7 @@ class CreateEvent extends React.Component {
             reduce_type: v,
         })
     }
-     
+    
 
     dellinkitm(i) {
  
@@ -247,10 +249,10 @@ class CreateEvent extends React.Component {
 
         this.setState({
             event_name: values.event_name,
-            event_type: 2,
+            
             event_users: values.event_users,
             reduce_type: values.reduce_type,
-            reduce_time: values.reduce_time,
+         
             pid: values.pid,
             event_desc: values.event_desc,
 
@@ -261,7 +263,7 @@ class CreateEvent extends React.Component {
             capacity_quota: values.capacity_quota,
             unit_capacity: values.unit_capacity,
             capacity_pre_value: values.capacity_pre_value,
-            delay_time: values.delay_time,
+            
             link_info: templinkar,
 
 
@@ -269,9 +271,22 @@ class CreateEvent extends React.Component {
 
      
 
-        
+        if (this.state.end_time <= this.state.start_time ) {
+             
+            notification.error({
+                message: '提示',
+                description: '结束时间不能早于或等于开始时间！！',
+                duration: 60,
+                placement: 'topCenter',
+                onClick: () => {
+                  console.log('Notification Clicked!');
+                },
+            });
+
+            return false;
+        } else {
             this.eventInfonewBuild(values)
-         
+        }
 
 
 
@@ -289,6 +304,12 @@ class CreateEvent extends React.Component {
 
         })
          
+    }
+
+    onChangetmc(ts, ta){
+        this.setState({
+            reduce_time: ta,
+        })
     }
 
     onChangetm(ts, ta) {
@@ -312,7 +333,7 @@ class CreateEvent extends React.Component {
 
         let bodyFormData = new FormData();
         bodyFormData.append("event_name", v.event_name);
-        bodyFormData.append("event_type", 2);
+        bodyFormData.append("event_type", 1);
         bodyFormData.append("event_users", v.event_users);
         if (v.pid) {
             bodyFormData.append("pid", v.pid);
@@ -361,16 +382,11 @@ class CreateEvent extends React.Component {
         if (v.capacity_pre_value) {
             bodyFormData.append("capacity_pre_value", v.capacity_pre_value);
         }
-        if (v.delay_time) {
-            bodyFormData.append("delay_time", v.delay_time);
-        }
-
         if (v.reduce_time) {
-            bodyFormData.append("reduce_time", v.reduce_time);
+            bodyFormData.append("reduce_time", this.state.reduce_time);
         }
-        if (v.reduce_type) {
-            bodyFormData.append("reduce_type", v.reduce_type);
-        }
+ 
+   
         if (v.expand_max_rate) {
             bodyFormData.append("expand_max_rate", v.expand_max_rate);
         }
@@ -378,8 +394,6 @@ class CreateEvent extends React.Component {
         if (v.webhook) {
             bodyFormData.append("webhook", v.webhook);
         }
-
-        
         bodyFormData.append("link_info", JSON.stringify(this.state.clink_info));
 
 
@@ -412,13 +426,10 @@ class CreateEvent extends React.Component {
                         btndisabled: false,
                     })
 
-                    if (that.state.event_type == 2) {
-
-                        that.props.gotocapacity(response.data.auto_id)
-                    } else {
+                  
                         that.props.openmodals(false)
                         that.props.refreshlist(true)
-                    }
+                    
                 } else {
 
                     that.setState({
@@ -452,10 +463,20 @@ class CreateEvent extends React.Component {
 
     }
 
- 
+
+
+    onEventTypeChange = (value) => {
+       
+
+        this.setState({
+            event_type: 1,
+        });
+        
+    };
+
+
     finishlinkinfos(value) {
-
-
+        
         if (value.length == 2) {
             for (let i = 0; i < this.props.eventChain.length; i++) {
 
@@ -628,7 +649,7 @@ class CreateEvent extends React.Component {
                         autoComplete="off"
                         initialValues={{ event_type: this.state.event_type + '', reduce_type: this.state.reduce_type+'' }}
                     >
-                         
+                        
                         <Form.Item
                             label="事件名称"
                             name="event_name"
@@ -636,9 +657,84 @@ class CreateEvent extends React.Component {
                         >
                             <Input />
                         </Form.Item>
+                        {this.state.event_type == 1 ? (
+
+                            <Form.Item
+                                label="父事件"
+                                name="pid"
+
+                            >
+
+                                <Select
+                                    placeholder="请选择父事件"
+                                >
+
+                                    {this.props.tabledt ? (
+
+                                        this.props.tabledt.map(function (itm) {
+                                            return (
+                                                <Option key={itm.id}> {itm.event_name} </Option>
+                                            )
+                                        })
+
+                                    ) : (
+                                            <Option value="null">   请选择 </Option>
+                                        )}
+
+
+
+                                </Select>
+                            </Form.Item>
+
+                        ) : ("")}
+
+
                         
 
-                     
+
+                        {this.state.event_type == 1 ? (
+                            <Row>
+                                <Col span={8}>
+                                    <Form.Item
+                                        label="事件开始时间"
+                                        name="start_time"
+                                        rules={[{ required: true }]}
+                                    >
+
+                                        <DatePicker format="YYYY-MM-DD HH:mm:ss" showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }} onChange={this.onChangetm} onOk={this.onOk} />
+                                    </Form.Item>
+
+                                </Col>
+                                <Col span={8}>
+                                    <Form.Item
+                                        label="事件结束时间"
+                                        name="end_time"
+                                        rules={[{ required: true }]}
+
+                                    >
+
+                                        <DatePicker format="YYYY-MM-DD HH:mm:ss" showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }} onChange={this.onChangetmb} onOk={this.onOk} />
+                                    </Form.Item>
+
+                                </Col>
+                                <Col span={8}>
+                                    <Form.Item
+                                        label="事件缩容时间"
+                                        name="reduce_time"
+                                        rules={[{ required: true }]}
+
+                                    >
+
+                                        <DatePicker format="YYYY-MM-DD HH:mm:ss" showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }} onChange={this.onChangetmc} onOk={this.onOk} />
+                                    </Form.Item>
+
+                                </Col>
+                            </Row>
+
+                        ) : ("")}
+
+                       
+
 
                       
                         <Form.Item
@@ -648,7 +744,33 @@ class CreateEvent extends React.Component {
                         >
                             <Input />
                         </Form.Item>
-                        
+                        {this.state.event_type == 1 ? (
+                            <Row className="col12row">
+                                <Col span={12}>
+                                    <Form.Item
+                                        label="运营指标"
+                                        name="op_quota"
+                                    >
+
+
+                                        <Select>
+                                            <Option value="1"> 同时在线 </Option>
+                                            <Option value="2"> qps </Option>
+
+                                        </Select>
+                                    </Form.Item>
+                                </Col>
+                                <Col span={12}>
+                                    <Form.Item
+                                        label="预估值(万)"
+                                        name="op_pre_value"
+                                    >
+                                        <InputNumber />
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+
+                        ) : ("")}
 
 
                         <Row>
@@ -731,7 +853,14 @@ class CreateEvent extends React.Component {
                             </div>
                         ) : ("")}
                         <Row>
-                           
+                            {/* <Col span={12}>
+                                <Form.Item
+                                    label="实时数据url"
+                                    name="op_url"
+                                >
+                                    <Input onBlur={this.onBlur} />
+                                </Form.Item>
+                            </Col> */}
                             <Col span={12}>
                                 {this.state.filemap ? (
                                     <div>
@@ -766,96 +895,7 @@ class CreateEvent extends React.Component {
                             </Col>
                         </Row>
 
-                        {this.state.event_type == 2 ? (
-                            <Row>
-
-                                <Col span={12} className="eventtypequest">
-
-                               
-                                <Form.Item
-                                    label="缩容方式"
-                                    name="reduce_type"
-                                    rules={[{ required: true }]}
-                                >
-                                    <Select
-                                        onChange={this.onReduceTypeChange}
-                                    >
-                                        <Option value="1"> 按N小时后缩容 </Option>
-                                        <Option value="2"> 按指定缩容时间 </Option>
-                                        
-                                    </Select>
-                                </Form.Item>
-                                </Col>
-                                <Col span={12} className="eventtypequest">
-
-                                    {this.state.reduce_type == 2 ? (
-                                        <div>
-
-                                       
-                                            <Form.Item
-                                                label="延时缩容"
-                                                name="reduce_time"
-                                                initialValue="04:00"
-                                            >
-                                                 
-
-                                                 <Select>
-                                                    <Option value="00:00"> 00:00 </Option>
-                                                    <Option value="01:00"> 01:00 </Option>
-                                                    <Option value="02:00"> 02:00 </Option>
-                                                    <Option value="03:00"> 03:00 </Option>
-                                                    <Option value="04:00"> 04:00 </Option>
-                                                    <Option value="05:00"> 05:00 </Option>
-                                                    <Option value="06:00"> 06:00 </Option>
-                                                    <Option value="07:00"> 07:00 </Option>
-                                                    <Option value="08:00"> 08:00 </Option>
-                                                    <Option value="09:00"> 09:00 </Option>
-                                                    <Option value="10:00"> 10:00 </Option>
-                                                    <Option value="11:00"> 11:00 </Option>
-                                                    <Option value="12:00"> 12:00 </Option>
-                                                    <Option value="13:00"> 13:00 </Option>
-                                                    <Option value="14:00"> 14:00 </Option>
-                                                    <Option value="15:00"> 15:00 </Option>
-                                                    <Option value="16:00"> 16:00 </Option>
-                                                    <Option value="17:00"> 17:00 </Option>
-                                                    <Option value="18:00"> 18:00 </Option>
-                                                    <Option value="19:00"> 19:00 </Option>
-                                                    <Option value="20:00"> 20:00 </Option>
-                                                    <Option value="21:00"> 21:00 </Option>
-                                                    <Option value="22:00"> 22:00 </Option>
-                                                    <Option value="23:00"> 23:00 </Option>
-
-                                                </Select>
-
-                                             </Form.Item>
-                                        </div>
-                                    ): (
-                                        <div>
-
-                                        
-                                            <Form.Item
-                                                label="N小时后缩容"
-                                                name="delay_time"
-                                                initialValue={2}
-                                            >
-                                                <Select>
-                                                    <Option value="2"> 2 </Option>
-                                                    <Option value="4"> 4 </Option>
-                                                    <Option value="6"> 6 </Option>
-                                                    <Option value="12"> 12 </Option>
-                                                </Select>
-                                            </Form.Item>
-                                            
-                                    </div>
-                                    )}
-                                   
-                                   
-                                </Col>
-                              
- 
-                            </Row>
-                        ) : ("")}
-
+                         
 
                         {this.props.eventChainChildren ? (
 
@@ -944,4 +984,4 @@ class CreateEvent extends React.Component {
 
 
 
-export default CreateEvent;
+export default CreateEventHand;

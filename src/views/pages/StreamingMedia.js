@@ -57,16 +57,7 @@ export default class StreamingMedia extends React.Component {
         })
         .catch(function (error) {
           console.log(error);
-            notification.error({
-                message: '提示',
-                description: error.message,
-                duration: 60,
-                placement: 'topCenter',
-                onClick: () => {
-                console.log('Notification Clicked!');
-                },
-            });
-          
+           
         })
   
 
@@ -138,15 +129,7 @@ export default class StreamingMedia extends React.Component {
            })
            .catch(function (error) {
              console.log(error);
-             notification.error({
-                message: '提示',
-                description: error.message,
-                duration: 60,
-                placement: 'topCenter',
-                onClick: () => {
-                  console.log('Notification Clicked!');
-                },
-            });
+           
            })
     }
 
@@ -189,15 +172,7 @@ export default class StreamingMedia extends React.Component {
         })
         .catch(function (error) {
           console.log(error);
-          notification.error({
-            message: '提示',
-            description: error.message,
-            duration: 60,
-            placement: 'topCenter',
-            onClick: () => {
-              console.log('Notification Clicked!');
-            },
-        });
+         
 
         })
        
@@ -257,15 +232,7 @@ export default class StreamingMedia extends React.Component {
         })
         .catch(function (error) {
             console.log(error);
-            notification.error({
-                message: '提示',
-                description: error.message,
-                duration: 60,
-                placement: 'topCenter',
-                onClick: () => {
-                console.log('Notification Clicked!');
-                },
-            });
+           
           
         })
     }

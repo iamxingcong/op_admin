@@ -23,19 +23,14 @@ export default class CheckList extends React.Component {
     
     componentDidMount(){
         
-        console.log(this.props)
-        let t = this.props.id
-         
-        console.log(t)
-       
+        
  
         var url_string = window.location.href.replace(/\/#/g,"")
-        console.log(url_string)
+      
         var url = new URL(url_string);
         var c = url.searchParams.get("tabs");
         var b = url.searchParams.get("id");
-        console.log(b)
-        console.log(c);
+       
         this.agetRates(b)
         if(c){
             this.props.defaultkey(c)
@@ -73,39 +68,30 @@ export default class CheckList extends React.Component {
             })
             .catch(function (error) {
                 console.log(error);
-                notification.error({
-                    message: '提示',
-                    description: error.message,
-                    duration: 60,
-                    placement: 'topCenter',
-                    onClick: () => {
-                    console.log('Notification Clicked!');
-                    },
-                });
+               
             })
 
         
     }
 
-    //  child transfer value to parent
+  
     goto_tabs(v){
-        console.log(v)
+       
         this.props.defaultkey(v.platform_name)
     }
    
 
     copylink(v){
-        console.log(v)
-       
+     
         var url_string = window.location.href.replace(/\/#/g,"")
-        console.log(url_string)
+    
         var url = new URL(url_string);
        
         var b = url.searchParams.get("id");
 
         var txt = url.host+"/#/EventDetail?id=" + b+"&tabs="+ v.platform_name;
         navigator.clipboard.writeText(txt)
-        console.log(txt)
+      
         
         notification.success({
             message: '提示',
@@ -129,7 +115,7 @@ export default class CheckList extends React.Component {
                 align: "center",
             },
             {
-                title: '是否以填写详情内容',
+                title: '是否已填写详情内容',
                 dataIndex: 'is_tianxie',
                 align: "center",
                 render: (text, data) => (
@@ -176,7 +162,7 @@ export default class CheckList extends React.Component {
                 dataIndex: 'platform',
                 align: "center",
                 render: (text, data, index) => (
-                    <div>
+                    <div className="opbtngrp">
 
                     
                     <Button  onClick={()=> this.goto_tabs(data)} type="primary" size="small">

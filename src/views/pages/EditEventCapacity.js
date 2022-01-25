@@ -1,11 +1,13 @@
 import React from 'react';
 
-import { Button, Modal, Form, Input, Select, Row, Col, InputNumber, Cascader, notification } from 'antd';
+import { Button, Modal, Form, Input, Select, Row, Col, InputNumber, Cascader, notification , Spin } from 'antd';
 
 import {
 
     MinusCircleOutlined,
-    PlusCircleOutlined
+    PlusCircleOutlined,
+    LoadingOutlined,
+
 } from '@ant-design/icons';
 
 
@@ -18,7 +20,10 @@ import { APIURL } from '../../common/constdt.js'
 
 const { Option } = Select;
 
-var tempar = []
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+
+
+let tempar = []
 
 
 
@@ -41,7 +46,7 @@ class EditEventCapacity extends React.Component {
             event_name: "",
             event_type: null,
             event_users: "",
-            pid: "",
+            pid: 0,
 
             start_time: "",
             end_time: "",
@@ -51,7 +56,7 @@ class EditEventCapacity extends React.Component {
             op_pre_value: 0,
             capacity_quota: 0,
             unit_capacity: 0,
-            delay_time: 0,
+            delay_time: null,
             link_info: null,
             webhook: null,
             clink_info: null,
@@ -61,6 +66,7 @@ class EditEventCapacity extends React.Component {
             btndisabled: false,
         }
 
+        this.hideModalcls = this.hideModalcls.bind(this);
         this.hideModal = this.hideModal.bind(this);
         this.onFinish = this.onFinish.bind(this);
         this.onChangea = this.onChangea.bind(this)
@@ -69,116 +75,34 @@ class EditEventCapacity extends React.Component {
         this.onReduceTypeChange = this.onReduceTypeChange.bind(this)
     }
 
-    componentDidMount() {
-        this.newagetRates();
-    }
+ 
 
+
+ 
+    
     onReduceTypeChange(v) {
 
-        console.log(v)
+         
         this.setState({
             reduce_type: v,
         })
     }
 
-    async newagetRates() {
-
-        const urlsx = `${APIURL}/capacity/newMenu`;
-
-        var that = this;
-        await axios.get(urlsx, { withCredentials: true })
-            .then(function (response) {
-
-                console.log(response.data.data);
-
-                let array_one = []
-                if (response.data.data) {
-
-                    that.setState({
-                        eventChain: response.data.data
-
-                    })
-
-                    for (let h = 0; h < response.data.data.length; h++) {
-                        let obj_one = {}
-                        obj_one.label = response.data.data[h].cateName;
-                        obj_one.value = response.data.data[h].cate;
-                        obj_one.children = []
-                        array_one.push(obj_one)
-
-
-                        let array_two = []
-                        if (response.data.data[h].menu) {
-
-                            for (let j = 0; j < response.data.data[h].menu.length; j++) {
-                                let obj_two = {}
-                                obj_two.label = response.data.data[h].menu[j].pName;
-                                obj_two.value = response.data.data[h].menu[j].pType;
-
-                                array_two.push(obj_two)
-
-                                let array_three = []
-
-                                if (response.data.data[h].menu[j].menu && response.data.data[h].menu[j].menu.length >= 1 && response.data.data[h].menu[j].menu[0].cate) {
-
-                                    for (let k = 0; k < response.data.data[h].menu[j].menu.length; k++) {
-                                        let obj_three = {}
-                                        obj_three.label = response.data.data[h].menu[j].menu[k].subName;
-                                        obj_three.value = response.data.data[h].menu[j].menu[k].subType;
-                                        array_three.push(obj_three)
-                                    }
-                                    array_two[j].children = array_three
-
-                                } else {
-                                    
-                                    let obj_three = {}
-                                    obj_three.label = "_";
-                                    obj_three.value = "_";
-                                    array_three.push(obj_three)
-                                }
-
-
-                            }
-                            array_one[h].children = array_two
-                        }
-                        // new menus
-                        that.setState({
-                            eventChainChildren: array_one
-
-                        })
-                    }
-
-
-                    console.log(array_one);
-
-
-                }
-
-            })
-            .catch(function (error) {
-                console.log(error);
-                notification.error({
-                    message: '提示',
-                    description: error.message,
-                    duration: 60,
-                    placement: 'topCenter',
-                    onClick: () => {
-                    console.log('Notification Clicked!');
-                    },
-                });
-            })
-    }
-
     hideModal() {
+ 
 
         this.props.openmodals(false)
 
     };
 
+    hideModalcls() {
+        this.props.openmodalsocls(false)
+    }
+    
     onFinish(values) {
-         
+        
        
-        console.log('Success:', values);
+      
 
         let templinkar = []
         tempar = []
@@ -190,7 +114,7 @@ class EditEventCapacity extends React.Component {
             event_name: values.event_name,
             event_type: values.event_type,
             event_users: values.event_users,
-            pid: values.pid,
+            pid: 0,
             reduce_type: values.reduce_type,
             reduce_time: values.reduce_time,
 
@@ -214,8 +138,7 @@ class EditEventCapacity extends React.Component {
         var deduplication = []
         var tmparr = []
 
-        console.log("----")
-        console.log(this.state.temp_link_list)
+ 
          
         if (this.state.temp_link_list) {
             for (let i = 0; i < this.state.temp_link_list.length; i++) {
@@ -246,7 +169,7 @@ class EditEventCapacity extends React.Component {
 
                     return false;
                 }
-                console.log(deduplication);
+                 
             }
 
 
@@ -284,9 +207,9 @@ class EditEventCapacity extends React.Component {
 
                     return false;
                 }
-                console.log(deduplication);
+                
             }
-
+            
             for (let s = 0; s < templinkar.length; s++) {
                 this.finishlinkinfos(templinkar[s]);
             }
@@ -318,11 +241,10 @@ class EditEventCapacity extends React.Component {
 
         if (this.state.webhook) {
             bodyFormData.append("webhook", this.state.webhook);
+        }else {
+            bodyFormData.append("webhook", '');
         }
-        if (v.pid) {
-            bodyFormData.append("pid", v.pid);
-        }
-
+        
 
 
         if (this.state.start_time) {
@@ -377,7 +299,33 @@ class EditEventCapacity extends React.Component {
             bodyFormData.append("expand_max_rate", this.state.expand_max_rate);
         }
 
-        console.log(this.state.clink_info)
+     
+        let tmplink_id = []
+        for(let h = 0; h < this.state.clink_info.length; h++){
+            if (tmplink_id.indexOf(this.state.clink_info[h].link_id) === -1) {
+                tmplink_id.push(this.state.clink_info[h].link_id)
+            } else {
+                console.log(this.state.clink_info[h].link_id + " link_id 重复") 
+    
+                notification.error({
+                    message: '提示',
+                    description: '请去除重复的链路！！',
+                    duration: 60,
+                    placement: 'topCenter',
+                    onClick: () => {
+                      console.log('Notification Clicked!');
+                    },
+                });
+                
+                this.setState({
+                    btndisabled: false,
+                })
+                return false;
+            }
+        }
+
+
+       
 
         if (this.state.clink_info) {
             bodyFormData.append("link_info", JSON.stringify(this.state.clink_info));
@@ -402,11 +350,12 @@ class EditEventCapacity extends React.Component {
                           console.log('Notification Clicked!');
                         },
                     });
-                    that.hideModal();
+                    
 
-                    that.props.openmodals(false)
+                   that.hideModal();
 
-                    window.location.reload() 
+                
+                
                     
 
                 } else {
@@ -431,15 +380,17 @@ class EditEventCapacity extends React.Component {
             })
             .catch(function (error) {
                 console.log(error);
+                
                 notification.error({
                     message: '提示',
-                    description: error.message,
+                    description: "网络接口错误！",
                     duration: 60,
                     placement: 'topCenter',
                     onClick: () => {
                       console.log('Notification Clicked!');
                     },
                 });
+                
                 that.setState({
                     btndisabled: false,
                 })
@@ -458,10 +409,7 @@ class EditEventCapacity extends React.Component {
 
     linkinfcarraysub() {
 
-        console.log('add s+')
-        console.log(this.state.temp_link_list)
-        console.log(this.props.link_list)
-
+   
 
         let templinkar = []
 
@@ -482,16 +430,13 @@ class EditEventCapacity extends React.Component {
             temp_link_list: templinkar
         })
 
-        console.log(this.state.temp_link_list)
-
+       
 
     }
 
     linkinfcarray() {
 
-        console.log('add s')
-        console.log(this.state.temp_link_list)
-        console.log(this.props.link_list)
+     
 
         let templinkar = []
 
@@ -508,8 +453,7 @@ class EditEventCapacity extends React.Component {
             temp_link_list: templinkar
         })
 
-        console.log(this.state.temp_link_list)
-
+        
 
     }
 
@@ -570,30 +514,31 @@ class EditEventCapacity extends React.Component {
     finishlinkinfos(value) {
 
          
-        console.log( value );
+        
         if(value.length == 2) {
-            for (let i = 0; i < this.state.eventChain.length; i++) {
+            for (let i = 0; i < this.props.eventChain.length; i++) {
 
 
-                if (value[0] === this.state.eventChain[i].cate) {
-
-
-
-
-                    for (let j = 0; j < this.state.eventChain[i].menu.length; j++) {
-
-
-
-                        if (value[1] === this.state.eventChain[i].menu[j].pType) {
+                if (value[0] === this.props.eventChain[i].cateName) {
 
 
 
 
-                            let sob = this.state.eventChain[i].menu[j];
+                    for (let j = 0; j < this.props.eventChain[i].menu.length; j++) {
+
+
+
+                        if (value[1] === this.props.eventChain[i].menu[j].pName) {
+
+
+
+
+                            let sob = this.props.eventChain[i].menu[j];
                             delete sob.menu
-                            console.log(sob)
+                  
 
                             tempar.push(sob)
+                             
                             this.setState({
                                 clink_info: tempar
                             })
@@ -604,26 +549,26 @@ class EditEventCapacity extends React.Component {
                 }
             }
         } else  if (value.length == 3 && value[2].length == 0) {
-            for (let i = 0; i < this.state.eventChain.length; i++) {
+            for (let i = 0; i < this.props.eventChain.length; i++) {
 
 
-                if (value[0] === this.state.eventChain[i].cate) {
-
-
-
-
-                    for (let j = 0; j < this.state.eventChain[i].menu.length; j++) {
-
-
-
-                        if (value[1] === this.state.eventChain[i].menu[j].pType) {
+                if (value[0] === this.props.eventChain[i].cateName) {
 
 
 
 
-                            let sob = this.state.eventChain[i].menu[j];
+                    for (let j = 0; j < this.props.eventChain[i].menu.length; j++) {
+
+
+
+                        if (value[1] === this.props.eventChain[i].menu[j].pName) {
+
+
+
+
+                            let sob = this.props.eventChain[i].menu[j];
                             delete sob.menu
-                            console.log(sob)
+                      
 
                             tempar.push(sob)
                             this.setState({
@@ -636,22 +581,22 @@ class EditEventCapacity extends React.Component {
                 }
             }
         } else if (value.length == 3) {
-            for (let k = 0; k < this.state.eventChain.length; k++) {
+            for (let k = 0; k < this.props.eventChain.length; k++) {
 
 
-                if (value[0] === this.state.eventChain[k].cate) {
+                if (value[0] === this.props.eventChain[k].cateName) {
 
-                    for (let l = 0; l < this.state.eventChain[k].menu.length; l++) {
+                    for (let l = 0; l < this.props.eventChain[k].menu.length; l++) {
 
-                        if (value[1] === this.state.eventChain[k].menu[l].pType) {
+                        if (value[1] === this.props.eventChain[k].menu[l].pName) {
 
-                            for (let f = 0; f < this.state.eventChain[k].menu[l].menu.length; f++) {
+                            for (let f = 0; f < this.props.eventChain[k].menu[l].menu.length; f++) {
 
-                                if (value[2] === this.state.eventChain[k].menu[l].menu[f].subType) {
+                                if (value[2] === this.props.eventChain[k].menu[l].menu[f].subName) {
 
-                                    console.log(this.state.eventChain[k].menu[l].menu[f])
                                     
-                                    tempar.push(this.state.eventChain[k].menu[l].menu[f])
+                                    
+                                    tempar.push(this.props.eventChain[k].menu[l].menu[f])
                                     this.setState({
                                         clink_info: tempar
                                     })
@@ -671,10 +616,17 @@ class EditEventCapacity extends React.Component {
 
 
     onBlur = (e) => {
-
-        console.log(e)
-
-        this.eventInfofilemap(e.target.value)
+        
+   
+        if(e.target.value == this.props.detail.op_url){
+            console.log("same op_url ")
+            return false;
+        }
+        
+        if(e.target.value && e.target.value.length >= 1){
+            this.eventInfofilemap(e.target.value)   
+        }
+       
     };
 
     async eventInfofilemap(e) {
@@ -693,15 +645,7 @@ class EditEventCapacity extends React.Component {
             })
             .catch(function (error) {
                 console.log(error);
-                notification.error({
-                    message: '提示',
-                    description: error.message,
-                    duration: 60,
-                    placement: 'topCenter',
-                    onClick: () => {
-                    console.log('Notification Clicked!');
-                    },
-                });
+               
 
             })
 
@@ -721,7 +665,7 @@ class EditEventCapacity extends React.Component {
                     maskClosable={false}
                     centered
                     visible={this.props.visible}
-                    onCancel={this.hideModal}
+                    onCancel={this.hideModalcls}
                     width={1120}
                     footer={null}
                     destroyOnClose={true}
@@ -729,7 +673,7 @@ class EditEventCapacity extends React.Component {
                 >
 
 
-                    {this.props.detail && this.props.tabledt ? (
+                    {this.props.detail && this.props.tabledt  ? (
 
 
                         <Form
@@ -745,18 +689,16 @@ class EditEventCapacity extends React.Component {
                                 event_name: this.props.detail.event_name,
                                 event_users: this.props.detail.event_users,
                                 capacity_quota: this.props.detail.capacity_quota,
-
                                 op_url: this.props.detail.op_url,
-
-                                delay_time: this.props.detail.delay_time,
+                                delay_time: this.props.detail.delay_time ? this.props.detail.delay_time : 2,
                                 op_pre_value: this.props.detail.op_pre_value,
-                                expand_max_rate: this.props.detail.expand_max_rate,
+                                expand_max_rate: this.props.detail.expand_max_rate+"",
                                 end_time: moment(this.props.detail.end_time),
                                 start_time: moment(this.props.detail.start_time),
                                 op_quota: this.props.detail.op_quota,
                                 unit_capacity: this.props.detail.unit_capacity,
                                 webhook: this.props.detail.webhook,
-                                url_field: this.props.detail.url_field,
+                              
                                 reduce_type: this.props.detail.reduce_type + "",
                                 reduce_time: this.props.detail.reduce_time,
 
@@ -771,8 +713,8 @@ class EditEventCapacity extends React.Component {
                                     disabled
                                 >
 
-                                    <Option value={1}> 手动运营事件 </Option>
-                                    <Option value={2}> 自动推送事件 </Option>
+                                    <Option value={1}> 临时性事件 </Option>
+                                    <Option value={2}> 周期性事件 </Option>
 
                                 </Select>
                             </Form.Item>
@@ -785,24 +727,7 @@ class EditEventCapacity extends React.Component {
                             </Form.Item>
 
 
-                            {this.props.detail.event_type == 2 ? (
-
-                                <Form.Item
-                                    label="父事件"
-                                    name="pid"
-
-                                >
-                                    <Select
-                                        placeholder="--"
-                                        disabled
-                                    >
-                                        <Option value={0}> -- </Option>
-                                    </Select>
-                                </Form.Item>
-
-                            ) : ("")}
-
-
+                            
 
 
 
@@ -844,7 +769,7 @@ class EditEventCapacity extends React.Component {
                                     <Row>
                                         <Col span={12}>
                                             <Form.Item
-                                                label="容量指标"
+                                                label="运营指标"
                                                 name="capacity_quota"
                                                 rules={[{ required: true }]}
                                             >
@@ -853,9 +778,11 @@ class EditEventCapacity extends React.Component {
                                         </Col>
                                         <Col span={12}>
                                             <Form.Item
-                                                label="容量单位"
+                                                label="运营单位"
                                                 name="unit_capacity"
-                                                rules={[{ required: true }]}
+ 
+                                                rules={[{ required: true, message: "单位容量字段请填写数字！" }]}
+ 
                                             >
                                                 <InputNumber />
                                             </Form.Item>
@@ -873,11 +800,12 @@ class EditEventCapacity extends React.Component {
                                                 <Select
                                                     placeholder="设置每个模块允许扩容机器数的最大比例"
                                                 >
-
+                                                   
                                                     <Option value="30"> 30 </Option>
                                                     <Option value="50">  50 </Option>
                                                     <Option value="100">  100  </Option>
                                                     <Option value="200">  200 </Option>
+                                                    <Option value="0"> 无限制 </Option>
 
                                                 </Select>
                                             </Form.Item>
@@ -888,94 +816,7 @@ class EditEventCapacity extends React.Component {
                             ) : ("")}
 
 
-                            <div>
-                                {this.props.filemap ? (
-                                    <Row>
-                                        <Col span={12}>
-                                            <Form.Item
-                                                label="实时数据url"
-                                                name="op_url"
-                                            >
-                                                <Input />
-                                            </Form.Item>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Form.Item
-                                                label="映射字段"
-                                                name="url_field"
-
-                                            >
-                                                <Select
-
-                                                    style={{ width: 200 }}
-                                                    placeholder="Search to Select"
-                                                    optionFilterProp="children"
-
-                                                >
-                                                    <Option value="1" key="00z">Not Identified</Option>
-                                                    {this.props.mapdt ? (
-                                                        this.props.mapdt.map(function (i, t) {
-                                                            return (<Option value={i} key={t}> {i} </Option>)
-                                                        })
-
-                                                    ) : ("")}
-
-                                                </Select>
-                                            </Form.Item>
-                                        </Col>
-
-                                    </Row>
-                                ) : (
-                                        ""
-
-                                    )}
-
-
-                                <Row>
-                                    {!this.props.filemap ? (
-                                        <Col span={12}>
-                                            <Form.Item
-                                                label="实时数据url"
-                                                name="op_url"
-                                            >
-                                                <Input onBlur={this.onBlur} />
-                                            </Form.Item>
-                                        </Col>
-                                    ) : ("")}
-
-                                    {this.state.filemap ? (
-                                        <Col span={12}>
-                                            <Form.Item
-                                                label="映射字段"
-                                                name="url_field"
-
-                                            >
-                                                <Select
-
-                                                    style={{ width: 200 }}
-                                                    placeholder="Search to Select"
-                                                    optionFilterProp="children"
-
-                                                >
-                                                    <Option value="1" key="00z">Not Identified</Option>
-                                                    {this.state.mapdt ? (
-                                                        this.state.mapdt.map(function (i, t) {
-                                                            return (<Option value={i} key={t}> {i} </Option>)
-                                                        })
-
-                                                    ) : ("")}
-
-                                                </Select>
-                                            </Form.Item>
-                                        </Col>
-                                    ) : (
-                                            ""
-
-                                        )}
-                                </Row>
-
-
-                            </div>
+                            
 
                             <div>
 
@@ -1017,10 +858,9 @@ class EditEventCapacity extends React.Component {
 
 
                                                         <Form.Item
-                                                            label="延时缩容"
+                                                            label="缩容时间"
                                                             name="reduce_time"
-
-                                                            tooltip="按指定缩容时间"
+                                                            initialValue="15:00"
                                                         >
 
 
@@ -1061,10 +901,9 @@ class EditEventCapacity extends React.Component {
 
 
                                                             <Form.Item
-                                                                label="N小时后缩容"
+                                                                label="缩容延时(小时)"
                                                                 name="delay_time"
-
-                                                                tooltip="从扩容完毕开始计算，X小时后缩容"
+                                                                 
                                                             >
                                                                 <Select>
                                                                     <Option value="2"> 2 </Option>
@@ -1090,10 +929,9 @@ class EditEventCapacity extends React.Component {
 
 
                                                             <Form.Item
-                                                                label="延时缩容"
+                                                                label="缩容时间"
                                                                 name="reduce_time"
-
-                                                                tooltip="按指定缩容时间"
+                                                                initialValue="15:00"
                                                             >
 
 
@@ -1134,10 +972,8 @@ class EditEventCapacity extends React.Component {
 
 
                                                                 <Form.Item
-                                                                    label="n小时后缩容"
+                                                                    label="缩容延时(小时)"
                                                                     name="delay_time"
-
-                                                                    tooltip="从扩容完毕开始计算，X小时后缩容"
                                                                 >
                                                                     <Select>
                                                                         <Option value="2"> 2 </Option>
@@ -1168,7 +1004,7 @@ class EditEventCapacity extends React.Component {
 
                                 {this.props.link_list && this.props.link_list.length >= 1 ? (
 
-                                    this.state.eventChainChildren && !this.state.linkinfotouched ? (
+                                    this.props.eventChainChildren && !this.state.linkinfotouched ? (
 
                                         <div>
 
@@ -1183,7 +1019,7 @@ class EditEventCapacity extends React.Component {
 
 
                                                             <Form.Item label={index == 0 ? "活动链路" : ""} initialValue={a} name={`link_info` + index} key={index + a[0]} rules={[{ required: true }]}>
-                                                                <Cascader options={this.state.eventChainChildren} onChange={this.onChangea} placeholder="Please select" key={index + a[0]}  allowClear={false} />
+                                                                <Cascader options={this.props.eventChainChildren} onChange={this.onChangea} placeholder="Please select" key={index + a[0]}  allowClear={false} />
                                                             </Form.Item>
                                                         </div>
                                                     </Col>
@@ -1217,7 +1053,7 @@ class EditEventCapacity extends React.Component {
 
 
                                                                 <Form.Item label={index == 0 ? "活动链路" : ""} initialValue={a} name={`link_info` + index} key={index + a[0]} rules={[{ required: true }]}>
-                                                                    <Cascader options={this.state.eventChainChildren} onChange={this.onChangea} placeholder="Please select"  allowClear={false}  />
+                                                                    <Cascader options={this.props.eventChainChildren} onChange={this.onChangea} placeholder="Please select"  allowClear={false}  />
                                                                 </Form.Item>
                                                             </div>
                                                         </Col>
@@ -1249,7 +1085,7 @@ class EditEventCapacity extends React.Component {
                                             <Col span={12}>
 
                                                 <Form.Item name="link_info0" label="活动链路" rules={[{ required: true }]}>
-                                                    <Cascader options={this.state.eventChainChildren} onChange={this.onChangea} placeholder="Please select" />
+                                                    <Cascader options={this.props.eventChainChildren} onChange={this.onChangea} placeholder="Please select" />
                                                 </Form.Item>
                                             </Col>
                                         </Row>
@@ -1275,9 +1111,15 @@ class EditEventCapacity extends React.Component {
 
 
 
-                    ) : ("")}
+                    ) : (
+                        ""
+                    )}
 
-
+                        {this.state.btndisabled ? (
+                            <div className="editspindx">  <Spin indicator={antIcon} />  </div>
+                        ): (
+                          ""
+                        )}
 
                 </Modal>
 

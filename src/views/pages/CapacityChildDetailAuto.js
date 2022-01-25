@@ -2,16 +2,14 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 
-import { Table, Row,   Button, Col, Card, Select, Tabs, Tooltip, Spin,    } from 'antd';
- 
+import { Table, Row,   Button, Col, Card, Select, Tabs, Tooltip, Spin  } from 'antd';
 
-import {   LoadingOutlined , QuestionCircleOutlined, } from '@ant-design/icons';
+ 
+import {   LoadingOutlined ,QuestionCircleOutlined, } from '@ant-design/icons';
 
 import CtsdbGraph from './CtsdbGraph.js'
 import CtsdbGraphMultiple from './CtsdbGraphMultiple.js'
 import OperateUrlConfig from './OperateUrlConfig.js'
-
-
 
 import axios from "axios";
 
@@ -21,7 +19,7 @@ const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 const { Option } = Select;
 const { TabPane } = Tabs;
 
-class CapacityChildDetail extends React.Component {
+class CapacityChildDetailAuto extends React.Component {
 
     constructor(props) {
         super(props);
@@ -34,12 +32,12 @@ class CapacityChildDetail extends React.Component {
             event_id: null,
             unit_capacity: null,
             num: null,
-            graphxvisible: false,
+           
             link_list: [],
             filemap: false,
             mapdt: null,
-            svisible: false,
             confvisible: false,
+          
             secondarray: [],
             originalsecond: [],
             link_id: null,
@@ -48,26 +46,21 @@ class CapacityChildDetail extends React.Component {
             link_info: null,
             linklist: null,
             linkspin: null,
-            graphspin: null,
-            graphdt: null,
-            
-            motlannua: null,
             cpname: "",
             wheight: 600,
         }
 
        
         this.tabeventchaine = this.tabeventchaine.bind(this)
+      
         this.ctsdbGraph = this.ctsdbGraph.bind(this)
-        this.hideModal = this.hideModal.bind(this)
-        this.wrapper = React.createRef();
        
     }
 
 
     componentDidMount() {
-        let wh =  window.innerHeight - 520;
-        
+        let wh =  window.innerHeight - 563;
+        console.log(wh);
         this.tabeventchaine()
         const ts = this.props.location.search.replace("?id=","");
         this.setState({
@@ -88,59 +81,7 @@ class CapacityChildDetail extends React.Component {
         console.log(key);
     }
 
- 
-
-    hideModal() {
-
-
-        this.setState({
-            graphxvisible: false,
-        })
-
-    }
-
-    openurlcodepop(v) {
-      
-        console.log(v);
-        this.setState({
-            confvisible: true,
-        })
-
-    }
-    async opValueGraph(v){
-       
-        
-        this.setState({
-            graphspin: true,
-         
-        })
-  
-        const urls = `${APIURL}/eventInfo/opValueGraph`;
-
-        let that = this;
-        await axios.get(urls, {
-            withCredentials: true,
-            params: {
-                event_id: v.id,
-            }
-        })
-            .then(function (response) {
-                if(response.data.code == 0){
-                    
- 
-                    that.setState({
-                        svisible: true,
-                        graphdt: response.data,
-                        graphspin: false,
-                    })
-                }
-                
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
-    }
-
+    
     ctsdbGraph(v){
      
         console.log(v)
@@ -152,7 +93,14 @@ class CapacityChildDetail extends React.Component {
      
 
     }
+    openurlcodepop(v) {
+      
+        console.log(v);
+        this.setState({
+            confvisible: true,
+        })
 
+    }
 
     async tabeventchaine() {
         var ts = this.props.location.search.replace("?id=", "")
@@ -173,8 +121,7 @@ class CapacityChildDetail extends React.Component {
 
                 if (response.data.code == 0) {
 
-                   
-              
+                    
 
                     let tsdata = response.data.data;
                    
@@ -197,7 +144,9 @@ class CapacityChildDetail extends React.Component {
 
                 }
 
-               
+          
+                
+ 
 
             })
             .catch(function (error) {
@@ -258,18 +207,16 @@ class CapacityChildDetail extends React.Component {
             .then(function (response) {
               
                 if (response.data) {
-
+                  
                     that.setState({
                         cpname: response.data.data.capacity_quota
-                    });
-
+                    })
 
                     let link_list = []
                     if(response.data.data.link_list && response.data.data.link_list.length >=1){
                         for(let i = 0; i < response.data.data.link_list.length;i++){
-                            let tp = [response.data.data.link_list[i].cateName, response.data.data.link_list[i].pName, response.data.data.link_list[i].subName];
-
-                           
+                             
+                            let tp = [response.data.data.link_list[i].cateName, response.data.data.link_list[i].pName, response.data.data.link_list[i].subName]
                             link_list.push(tp)
                         }
                     }
@@ -309,7 +256,7 @@ class CapacityChildDetail extends React.Component {
         if(e && e.length >= 1){
             await axios.post(url, bodyFormData, { withCredentials: true })
            .then(function (response) {
-            
+           
             if(response.data.code == 0){
                 that.setState({
                     filemap: true,
@@ -360,12 +307,14 @@ class CapacityChildDetail extends React.Component {
 
     render() {
 
+
         const  configChange = (visible) => {
             this.setState({
                 confvisible: visible,
             })
         }
-           
+
+
         const   bgChange = (visible) => {
             this.setState({
                 svisible: visible
@@ -377,7 +326,7 @@ class CapacityChildDetail extends React.Component {
                 graphxvisible: visible
             })
         }
-
+        
         const gobacktoP = () => {
 
              
@@ -389,36 +338,26 @@ class CapacityChildDetail extends React.Component {
 
         }
 
+
         const goback = () => {
             
          
-            let urld = this.getCookie("url_address")
-            console.log(urld)
-
-            
-            console.log(this.state.detail)
-           
-            if(this.state.detail.event_type == 1){
-                this.props.history.push({
-                    pathname: "EventListHand",
-                   
-                 }); 
-            }else {
-                this.props.history.push({
-                    pathname: "EventList",
-                   
-                 }); 
-            }
-            
-           
-            
+        
+            this.props.history.push({
+                    pathname: "EventListAuto",
+                    search: "pid="+ this.state.detail.pid + "&event_type="+this.state.detail.event_type,
+                    state: {id: this.state.detail.pid}
+            });
+          
 
         }
        
 
         function areasf(v){
              
-       
+            // console.log(v.area);
+            // console.log(typeof v.area)
+            // console.log(v.area.length)
             
             if(v.area.length > 1 && typeof v.area !== 'string'){
                 return "--"
@@ -439,7 +378,8 @@ class CapacityChildDetail extends React.Component {
                 render: (text, data) => (
                     <Tooltip  placement="topLeft"  title= {data.app_name+"."+data.server_name}>
                     <span>
-                           
+                      
+                            
                    <a rel="noopener noreferrer"  href={`http://123.woa.com/v2/formal#/server-manage/index?app=${data.app_name}&server=${data.server_name}`} target="_blank"> {data.app_name+"."+data.server_name}  </a>
                  
                     </span>
@@ -447,9 +387,8 @@ class CapacityChildDetail extends React.Component {
                     
                 )
 
-                
-
             },
+            
             {
                 title: 'set',
                 dataIndex: 'set_name',
@@ -505,7 +444,6 @@ class CapacityChildDetail extends React.Component {
                     )
                     
                 },
-                 
                 dataIndex: 'max_max_cpu_by_time',
                 align: "center",
                 sorter: (a, b) => a.max_max_cpu_by_time - b.max_max_cpu_by_time,
@@ -517,12 +455,12 @@ class CapacityChildDetail extends React.Component {
                 )
 
             },
+            
             {
                 title: '原有台数',
                 dataIndex: 'before_num',
                 sorter: (a, b) => a.before_num - b.before_num,
                 align: "center",
-                 
 
             },
             {
@@ -546,6 +484,8 @@ class CapacityChildDetail extends React.Component {
                 )
 
             },
+           
+            
             {
                 title: '操作',
                 dataIndex: 'area',
@@ -557,28 +497,17 @@ class CapacityChildDetail extends React.Component {
                     
                 )
             },
-           
 
         ];
 
 
-
-       
-        
-
-
         return (
-
             <div  id="capacitycontainerchild">
-                        
-            
-            
             {this.state.id  && this.state.detail ? (
 
             <Card title="事件详情" bordered={false}  >
             
                 <div className="btnwrap">
-                   
                     <Button className="rightbtn" onClick={() => goback()}  type="primary"> 返回 </Button>
                     <Button className="rightbtn" onClick={() => gobacktoP()}  type="primary"> 返回到父事件 </Button>
  
@@ -587,25 +516,28 @@ class CapacityChildDetail extends React.Component {
 
 
 
-                <div className="detailwrap">
+                    <div className="detailwrap">
                    
 
                    <Row>
                        <Col span={8}>
-                        <label>
-                          事件类型：
-                        </label> { this.state.detail.event_type == 1 ? "临时性事件" : "周期性事件" }
+                       <label>
+                           事件类型：
+                        </label>
+                           { this.state.detail.event_type == 1 ? "临时性事件" : "周期性事件" }
                            
                        </Col>
                        <Col span={8}>
                          
-                         
-                       
+                          
+                           
                            <label>
-                            事件名称：
+                           事件名称：
                            </label>
-                           <div className="namelength440">
-                           {  this.state.detail.event_name  ?  this.state.detail.event_name: "--"}
+                            
+                            
+                            <div className="namelength440">
+                            {  this.state.detail.event_name  ?  this.state.detail.event_name: "--"}
                             </div>
                             
                        </Col>
@@ -615,7 +547,7 @@ class CapacityChildDetail extends React.Component {
                                <span> 
                                     <label>
                                      父事件：
-                                    </label>
+                                   </label>
                                    <Select
                                    placeholder="--"
                                    defaultValue={this.state.detail.pid}
@@ -645,25 +577,20 @@ class CapacityChildDetail extends React.Component {
                            <label>
                            开始时间：
                            </label>
-                            { this.state.detail.start_time  ? this.state.detail.start_time : "--" }
+                             
+                            {  this.state.detail.start_time  ? this.state.detail.start_time : "--" }
                        </Col>
                        <Col span={8}>
-                         <label>预计缩容时间：</label> { this.state.detail.end_time   ?  this.state.detail.end_time : "--" }
+                         <label> 预计缩容时间：</label> { this.state.detail.end_time   ?  this.state.detail.end_time : "--" }
                        </Col>
                         
                        <Col span={8}>
-
-                       
-                       <label> 负责人：</label>
-                      
-                       <Tooltip  placement="topLeft"  title={ this.state.detail.event_users ? this.state.detail.event_users : "--"}>
-                            <div className="namelength440">
+                           <label>
+                           负责人：
+                            </label>
+                            <div className="namelength440"> 
                                 {  this.state.detail.event_users ? this.state.detail.event_users : "--"}
-                           </div>
-                        </Tooltip>
-                        
-
-                           
+                            </div>
                        </Col>
                        
                    </Row>
@@ -671,7 +598,9 @@ class CapacityChildDetail extends React.Component {
 
                             <Row>
                             <Col span={8}>
-                                <label>容量指标：</label>
+                                <label>
+                                容量指标：
+                                </label>
                                   
                                 {  this.state.detail.capacity_quota  ? this.state.detail.capacity_quota : "--" }
                             </Col>
@@ -685,7 +614,8 @@ class CapacityChildDetail extends React.Component {
                                 <label>
                                 预估容量：
                                 </label>
-                                { this.state.detail.capacity_pre_value    ?  this.state.detail.capacity_pre_value   : " --- " }
+                                  
+                                { this.state.detail.capacity_pre_value    ?  this.state.detail.capacity_pre_value   : "-" }
                                 
                             </Col>
                             </Row>
@@ -693,65 +623,65 @@ class CapacityChildDetail extends React.Component {
 
                     ): ("")}
                    
-                  
 
                    <Row>
 
-                       <Col span={8}>
-                           <label> 扩容最大比例(%)： </label> {  this.state.detail.expand_max_rate ? this.state.detail.expand_max_rate : "无限制"}
-                       </Col>
+                        <Col span={8}>
+                            <label> 扩容最大比例(%)： </label> {  this.state.detail.expand_max_rate ? this.state.detail.expand_max_rate : "无限制"}
+                        </Col>
 
-                       
-                  
-                         
+
+
+                        
                         <Col span={8}>
                             <label> oncall 工单号：</label>
-                             <a rel="noopener noreferrer"  href={`http://oncall.oa.com/workBench?id=${this.state.detail.oncall_id}`} target="_blank"> 
-                             
-                                 {this.state.detail.oncall_id} 
-                             </a>
-                             {this.state.detail.oncall_id ? "" : "---"}
+                            <a rel="noopener noreferrer"  href={`http://oncall.oa.com/workBench?id=${this.state.detail.oncall_id}`} target="_blank"> 
+                            
+                                {this.state.detail.oncall_id} 
+                            </a>
+                            {this.state.detail.oncall_id ? "" : "---"}
                         </Col>
                         <Col span={8}>
                             <label>  真实容量：</label>
                             {  this.state.detail.max_op_value ? 
-                                 <span onClick={ ()=> this.opValueGraph(this.state.detail) } id="linklikespan"> { this.state.detail.max_op_value }   </span>
+                                <span onClick={ ()=> this.opValueGraph(this.state.detail) } id="linklikespan"> { this.state.detail.max_op_value }   </span>
+                                
                             : 
-                                 <span onClick={ ()=> this.openurlcodepop(this.state.detail) } id="linklikespan"> 关联容量数据  </span>
+                               <span onClick={ ()=> this.openurlcodepop(this.state.detail) } id="linklikespan"> 关联容量数据  </span>  
                             } 
  
  
- 
-                       </Col>
-                    </Row>
+                        </Col>
+                        </Row>
+                   <Row>
 
-                    <Row>
+
+                         
+                        { this.state.detail.op_pre_value && this.state.detail.event_type == 1  ?
                            
-                    { this.state.detail.op_pre_value && this.state.detail.event_type == 1  ?
-                            
-                            <Col span={24}>
-                                
-                            <label> 预估容量：</label>   {this.state.detail.op_pre_value }
-                            
-                            </Col> :
-                        "" }
-                    
-                    </Row>
+                           <Col span={24}>
+                               
+                               <label>预估容量：</label>  {this.state.detail.op_pre_value }
+                           
+                           </Col> :
+                         "" }
+                     
+                        
+                     
 
-                </div>
+                       
+                   </Row>
 
-                {this.state.graphspin ? (
-                     <div className="tableflowertrans">  <Spin indicator={antIcon} />  </div>
-                ):(
+               </div>
 
-                    ""
 
-                )}
+
+                  
 
 
                     {this.state.tabcapacitylist  ? (
                         
-                         
+                       
                              <Tabs defaultActiveKey="1" onChange={this.callback}> 
                               { this.state.tabcapacitylist.map((item) => {
 
@@ -761,7 +691,7 @@ class CapacityChildDetail extends React.Component {
                                 tab={
                                     <span>
                                         <Tooltip title={item.link_all_name}>
- 
+                                        
                                         {item.link_name}
                                         </Tooltip>
                                     </span>
@@ -770,8 +700,7 @@ class CapacityChildDetail extends React.Component {
                                 key={item.link_id}>
 
  
-                                                        
-                                
+                               
                                   
                                     <Table
 
@@ -786,7 +715,7 @@ class CapacityChildDetail extends React.Component {
                                             
 
                                         }}
-                                        scroll={{ y:   this.state.wheight  }}
+                                        scroll={{ y:  this.state.wheight  }}
 
                                         />
 
@@ -799,16 +728,18 @@ class CapacityChildDetail extends React.Component {
                             }
 
                             </Tabs>
-                        
-
-
+                       
                     ):(
-                        <div className="flowertrans">  <Spin indicator={antIcon} />  </div>
+                       ""
                     )}
                        
+                    {this.state.linkspin ?
+                     ("") : (
+                         <div className="flowertrans">  <Spin indicator={antIcon} />  </div>
+                    )}
                     
-                    
-                   
+
+ 
 
 
             </Card>
@@ -817,13 +748,14 @@ class CapacityChildDetail extends React.Component {
             <div className="flowertrans">  <Spin indicator={antIcon} />  </div>
         )}
 
-           
+
+
             {this.state.graphdt && this.state.graphdt.code == 0 ? (
                 <CtsdbGraph 
                 ref={this.wrapper}  
                 visible={this.state.svisible}
                 graphdata={this.state.graphdt}
-              
+            
                 openmodals={bgChange}
             />
 
@@ -831,27 +763,28 @@ class CapacityChildDetail extends React.Component {
                                 
             
             {this.state.motlannua ? (
-                 <CtsdbGraphMultiple 
-                 ref={this.wrapper}  
-                 visible={this.state.graphxvisible}
+                <CtsdbGraphMultiple 
+                ref={this.wrapper}  
+                visible={this.state.graphxvisible}
                 
-                 motlannuao={this.state.motlannua}
-                 multipleopenmodals={multipbgChange}
+                motlannuao={this.state.motlannua}
+                multipleopenmodals={multipbgChange}
                 />
 
             ): ("")}
-               
+            
 
-           <OperateUrlConfig 
-            ref={this.wrapper}  
-            visible={this.state.confvisible}
-            detail={this.state.detail}
-            configmodals={configChange}
-           />
-                                
+              <OperateUrlConfig 
+                    ref={this.wrapper}  
+                    visible={this.state.confvisible}
+                    detail={this.state.detail}
+                    configmodals={configChange}
+                />
+                                        
  
 
            
+              
         </div>
         )
     }
@@ -862,4 +795,4 @@ class CapacityChildDetail extends React.Component {
 
 
 
-export default withRouter(CapacityChildDetail);
+export default withRouter(CapacityChildDetailAuto);

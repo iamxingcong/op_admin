@@ -1,9 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+
+
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ConfigProvider } from 'antd';
+
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import moment from 'moment';
@@ -13,11 +17,11 @@ moment.locale('zh-cn');
 
 ReactDOM.render(
   //<React.StrictMode>
+  // <Provider store={store}>
   <ConfigProvider locale={zhCN}>
-        <App />,
+        <App />
   </ConfigProvider>,
-    
- // </React.StrictMode>,
+  // </Provider>,
   document.getElementById('root')
 );
 

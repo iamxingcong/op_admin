@@ -1,28 +1,30 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 
-import { Select, Card, Row, Col, DatePicker, Button, Table, Tooltip, Modal, notification, Tabs  } from 'antd';
+import { Select, Card, Row, Col, DatePicker, Button, Table, Tooltip, Modal, notification,  Spin  } from 'antd';
  
+import { LoadingOutlined } from '@ant-design/icons';
 
 import axios from "axios";
 import moment from 'moment';
 
 
 
-import CreateEvent from './CreateEvent.js'
+import CreateEventHand from './CreateEventHand.js'
 
 import {  APIURL } from '../../common/constdt.js'
 
-
-const { TabPane } = Tabs;
-
-const { Option } = Select;
 const { RangePicker } = DatePicker;
  
 
 
+const { Option } = Select;
+
  
-class EventList extends React.Component {
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+
+ 
+class EventListHand extends React.Component {
 
     constructor(props) {
         super(props);
@@ -40,23 +42,33 @@ class EventList extends React.Component {
             EngName: null,
             deleteid: null,
             delisModalVisible: false,
-            event_type: 2,
+            autodelisModalVisible: false,
+            event_type: 1,
+            eventChainChildren: null,
+            eventChain: null,
           
         }
     
         this.openCreate = this.openCreate.bind(this);
         this.onChange = this.onChange.bind(this);
-        this.check = this.check.bind(this)
+      
       
         this.handleChanges = this.handleChanges.bind(this)
         this.onChangetm = this.onChangetm.bind(this)
+       
  
         this.refreshlista = this.refreshlista.bind(this)
         this.handleCancel = this.handleCancel.bind(this)
         this.handleOk = this.handleOk.bind(this)
+        this.autohandleCancel = this.autohandleCancel.bind(this)
+        this.autohandleOk = this.autohandleOk.bind(this)
         this.delreal = this.delreal.bind(this)
-        this.callback = this.callback.bind(this)
-    
+      
+        
+        this.check = this.check.bind(this)
+        this.onOks = this.onOks.bind(this)
+       
+
         this.wrapper = React.createRef();
 
         
@@ -77,16 +89,7 @@ class EventList extends React.Component {
     }
 
 
-    callback(key) {
-        
-        console.log(key);
-        console.log('event_type change gose here')
-        this.setState({
-            event_type: key
-        })
-        this.callagetRates(0, key)
-         
-    }
+    
 
 
     async cookie_user(){
@@ -94,23 +97,21 @@ class EventList extends React.Component {
 
         await axios.get(urlsx, { withCredentials: true })
             .then(function(r){
-                console.log(r)
+                
             })
             .catch(function(er){
-                console.log(er)
+                
             })
     }
 
     async getnm(){
-        // https://iwiki.woa.com/pages/viewpage.action?pageId=602598584
-        // it seems this do not work, why
-        // it works only online, do not work localhost
+        
         let that = this;
         await axios.get("/ts:auth/tauth/info", { withCredentials: true })
             .then(function(r){
-                console.log(r)
+                
                 document.cookie=`EngName=${r.data.EngName}`;
-                console.log(document.cookie);
+                
                 that.setState({
                     EngName: r.data.EngName
                 })
@@ -118,6 +119,7 @@ class EventList extends React.Component {
             })
             .catch(function(er){
                 console.log(er)
+                 
             })
     }
 
@@ -132,8 +134,11 @@ class EventList extends React.Component {
         
 
         let that = this
-        await axios.get(urlsx, { 
-            withCredentials: true  
+        await axios.get(urlsx,  { withCredentials: true,
+            params: {
+            
+                event_type: 1,
+            } 
         })
             .then(function (response) {
               
@@ -148,75 +153,12 @@ class EventList extends React.Component {
             })
             .catch(function (error) {
                 console.log(error);
-                notification.error({
-                    message: '提示',
-                    description: error.message,
-                    duration: 60,
-                    placement: 'topCenter',
-                    onClick: () => {
-                    console.log('Notification Clicked!');
-                    },
-                });
+                
             })
 
     }
     
-    async callagetRates (t,z){
-         
-        this.setState({
-            tabledt: null,
-            total: null
-
-        })
-
-        const urlsx = `${APIURL}/eventInfo/getEventList`;
-
-        console.log("state.event_type called gose here, don't change, why")
-        console.log(this.state.event_type)
-
-        let that = this
-        await axios.get(urlsx,{
-            withCredentials: true,
-            params: {
-                event_status: z == 1 ? that.state.status : null,
-                event_type: z,
-                start_time: that.state.startTime,
-                end_time: that.state.endTime,
-                page: t,
-                page_size: that.state.pageSize,
-               
-            }
-        })
-            .then(function (response) {
-              
-                if (response.data) {
-                    that.setState({
-                        
-                        tabledt: response.data.data,
-                        total: response.data.page_data.total_num,
-
-                    })
-                }
-
-
-
-            })
-            .catch(function (error) {
-                console.log(error);
-                notification.error({
-                    message: '提示',
-                    description: error.message,
-                    duration: 60,
-                    placement: 'topCenter',
-                    onClick: () => {
-                    console.log('Notification Clicked!');
-                    },
-                });
-            })
-
-           
-    }
-
+    
 
     async agetRates (t){
   
@@ -257,15 +199,98 @@ class EventList extends React.Component {
             })
             .catch(function (error) {
                 console.log(error);
-                notification.error({
-                    message: '提示',
-                    description: error.message,
-                    duration: 60,
-                    placement: 'topCenter',
-                    onClick: () => {
-                    console.log('Notification Clicked!');
-                    },
-                });
+               
+            })
+
+           
+    }
+
+     
+    async statusagetRates (t){
+  
+        this.setState({
+            tabledt: null,
+            total: null
+
+        })
+        const urlsx = `${APIURL}/eventInfo/getEventList`;
+
+       
+        let that = this
+        await axios.get(urlsx,{
+            withCredentials: true,
+            params: {
+                event_status: t ? t : null,
+                event_type: that.state.event_type,
+                start_time: that.state.startTime,
+                end_time: that.state.endTime,
+                page: 0,
+                page_size: that.state.pageSize,
+               
+            }
+        })
+            .then(function (response) {
+              
+                if (response.data) {
+                    that.setState({
+                        
+                        tabledt: response.data.data,
+                        total: response.data.page_data.total_num,
+
+                    })
+                }
+
+
+
+            })
+            .catch(function (error) {
+                console.log(error);
+               
+            })
+
+           
+    }
+
+    async typeagetRates (start_time, end_time){
+  
+        this.setState({
+            tabledt: null,
+            total: null
+
+        })
+        const urlsx = `${APIURL}/eventInfo/getEventList`;
+
+       
+        let that = this
+        await axios.get(urlsx,{
+            withCredentials: true,
+            params: {
+                event_status: that.state.status,
+                event_type: that.state.event_type,
+                start_time: start_time,
+                end_time: end_time,
+                page: 0,
+                page_size: that.state.pageSize,
+               
+            }
+        })
+            .then(function (response) {
+              
+                if (response.data) {
+                    that.setState({
+                        
+                        tabledt: response.data.data,
+                        total: response.data.page_data.total_num,
+
+                    })
+                }
+
+
+
+            })
+            .catch(function (error) {
+                console.log(error);
+               
             })
 
            
@@ -274,7 +299,32 @@ class EventList extends React.Component {
 
     async  detailgetsx(data) {
 
-        console.log(data)
+        let tmpbjs = {
+            capacity_pre_value: null,
+            capacity_quota: "",
+            delay_time: 0,
+            end_time: "",
+            event_desc: null,
+            event_name: null,
+            event_status: null,
+            event_type: null,
+            event_users: "",
+            expand_max_rate: null,
+            id: "more",
+            is_del: 0,
+            op_pre_value: 0,
+            op_quota: 0,
+            op_url: null,
+            pid: '',
+            reduce_time: "",
+            reduce_type: null,
+            start_time: "",
+            unit_capacity: 0,
+            url_field: null,
+            webhook: "",
+        }
+
+       
             
         const urls = `${APIURL}/eventInfo/getEventList`;
        
@@ -288,7 +338,6 @@ class EventList extends React.Component {
         })
             .then(function (response) {
                
-                
                 var tempt = [];
                 if (response.data) {
 
@@ -298,11 +347,18 @@ class EventList extends React.Component {
                             if(response.data.data.length >=1){
                                 that.state.tabledt[i].children = response.data.data
                             }   
+
+                            if(response.data.data.length == 5){
+                                tmpbjs.pid = response.data.data[4].pid;
+                                tmpbjs.event_type = response.data.data[4].event_type;
+                                that.state.tabledt[i].children.push(tmpbjs)
+                            }
                             
+
                         }   
                         tempt.push(that.state.tabledt[i])
                     }
-
+                   
                     that.setState({
                         
                         tabledt: tempt,
@@ -317,15 +373,7 @@ class EventList extends React.Component {
             })
             .catch(function (error) {
                 console.log(error);
-                notification.error({
-                    message: '提示',
-                    description: error.message,
-                    duration: 60,
-                    placement: 'topCenter',
-                    onClick: () => {
-                    console.log('Notification Clicked!');
-                    },
-                });
+                
             })
 
 
@@ -336,29 +384,113 @@ class EventList extends React.Component {
 
 
     openCreate() {
-        this.setState({
-            visible: true,
-        })
+        this.newagetRates()
+         
+       
     }
 
+
+    async newagetRates() {
+
+        const urlsx = `${APIURL}/capacity/newMenu`;
+
+        let that = this;
+        await axios.get(urlsx, { withCredentials: true })
+            .then(function (response) {
+
+
+                
+
+                let array_one = []
+                if (response.data.code == 0) {
+
+                    that.setState({
+                        eventChain: response.data.data
+
+                    })
+
+                    for (let h = 0; h < response.data.data.length; h++) {
+                        let obj_one = {}
+                        obj_one.label = response.data.data[h].cateName;
+                        obj_one.value = response.data.data[h].link_id;
+                        obj_one.children = []
+                        array_one.push(obj_one)
+
+
+                        let array_two = []
+                        if (response.data.data[h].menu) {
+
+                            for (let j = 0; j < response.data.data[h].menu.length; j++) {
+                                let obj_two = {}
+                                obj_two.label = response.data.data[h].menu[j].pName;
+                                obj_two.value = response.data.data[h].menu[j].link_id;
+
+                                array_two.push(obj_two)
+
+
+
+                                let array_three = []
+
+
+                                if (response.data.data[h].menu[j].menu && response.data.data[h].menu[j].menu.length >= 1 && response.data.data[h].menu[j].menu[0].link_id) {
+
+                                    for (let k = 0; k < response.data.data[h].menu[j].menu.length; k++) {
+                                        let obj_three = {}
+                                        obj_three.label = response.data.data[h].menu[j].menu[k].subName;
+                                        obj_three.value = response.data.data[h].menu[j].menu[k].link_id;
+                                        array_three.push(obj_three)
+                                    }
+                                    array_two[j].children = array_three
+
+                                } else {
+                                    let obj_three = {}
+                                    obj_three.label = "_";
+                                    obj_three.value = "_";
+                                    array_three.push(obj_three)
+                                }
+
+
+                            }
+                            array_one[h].children = array_two
+                        }
+                        // new menus
+                        that.setState({
+                            eventChainChildren: array_one,
+                            visible: true,
+
+                        })
+                    }
+
+
+                   
+
+
+                }
+
+            })
+            .catch(function (error) {
+                console.log(error);
+                
+            })
+    }
 
   
     onChange(t) {
         
-        console.log(t);
+        
         this.setState({
             current: t.current,
             pageSize: t.pageSize,
         })
        this.agetRates(t.current)
-        console.log(this.state)
+       
        
     }
 
  
     handleChanges(v){
          
-        console.log(v)
+      
         if(v){
             this.setState({
                 status: v,
@@ -370,6 +502,9 @@ class EventList extends React.Component {
                 
             })
         }
+         
+        this.statusagetRates(v);
+        
         
     }
    
@@ -377,25 +512,55 @@ class EventList extends React.Component {
         this.agetRates(this.state.current)
     }
  
-    onChangetm(ts, ta){
-        console.log(ts,ta)
-        this.setState({
-         startTime: ta[0], 
-         endTime: ta[1], 
+
+    onOks(v){
+       
+       if(v[0]){
+            
+           this.setState({
+                startTime: v[0].format("YYYY-MM-DD HH:mm:ss"),
+           
+           })
+        
+       }
+     
+       if(v[1]){
+          
+           this.setState({
+            
+            endTime: v[1].format("YYYY-MM-DD HH:mm:ss"), 
+        })
+            
+       }
+   
+        
          
-     })
-      
     }
 
+   
+    onChangetm(ts, ta){
+       
+      
+        this.setState({
+            startTime: ta[0],
+            endTime: ta[1], 
+        })
+        
+        this.typeagetRates(ta[0], ta[1])
+            
+    
+    }
+
+    
 
     refreshlista(){
        
-       
+      
         this.agetRates(0)
     }
 
     gototest (v){
-        console.log(v)
+       
 
         this.props.history.push({
             pathname: "CapacityDetail",
@@ -411,22 +576,33 @@ class EventList extends React.Component {
         })
     }
     handleOk(){
-        console.log('del')
-        console.log(this.state.deleteid)
+        
         this.delreal()
     }
     
 
-    async rdeletetnomodal(v){
+    autohandleCancel(){
+        this.setState({
+             
+            autodelisModalVisible: false,
+        })
+    }
+    autohandleOk(){
         
-        console.log(v)
+        this.rdeletetnomodal()
+    }
+    
+
+    async rdeletetnomodal(){
+        
+        
 
         const url = `${APIURL}/eventInfo/deleteEvent`;
 
         let bodyFormData = new FormData();
 
    
-        bodyFormData.append("id", v.id);
+        bodyFormData.append("id", this.state.deleteid);
 
         let that = this
 
@@ -449,7 +625,7 @@ class EventList extends React.Component {
                     that.agetRates(0)
                     that.setState({
                         
-                        delisModalVisible: false 
+                        autodelisModalVisible: false 
 
                     })
                 } else {
@@ -471,15 +647,7 @@ class EventList extends React.Component {
             })
             .catch(function (error) {
                 console.log(error);
-                notification.error({
-                    message: '提示',
-                    description: error.message,
-                    duration: 60,
-                    placement: 'topCenter',
-                    onClick: () => {
-                    console.log('Notification Clicked!');
-                    },
-                });
+                
             })
     }
     async delreal(){
@@ -534,27 +702,23 @@ class EventList extends React.Component {
             })
             .catch(function (error) {
                 console.log(error);
-                notification.error({
-                    message: '提示',
-                    description: error.message,
-                    duration: 60,
-                    placement: 'topCenter',
-                    onClick: () => {
-                    console.log('Notification Clicked!');
-                    },
-                });
+               
             })
     }
    
     render(){
 
       const deletetnomodal = (v) => {
-          this.rdeletetnomodal(v)
+          
+          this.setState({
+            deleteid: v.id,
+            autodelisModalVisible: true,
+        })
+         
       }
 
         const   deletets = (v) => {
-            console.log(v)
-            console.log(v.id)
+           
             this.setState({
                 deleteid: v.id,
                 delisModalVisible: true,
@@ -584,15 +748,20 @@ class EventList extends React.Component {
             
            
             this.props.history.push({
-               pathname: "CapacityChildDetail",
+                pathname: "EventDetail",
+              // pathname: "CapacityChildDetail",
                search: "id="+data.id,
                state: {id: data.id}
             }); 
         }
 
-
+        const morethanfinve = (data) => {
+             
+            
+            window.open (window.location.protocol + "//" + window.location.host+`/#/EventListAuto?pid=`+data.pid + "&event_type=" + data.event_type)
+        }
         const subhandleDetail = (data) => {
-            console.log(data)
+           
             this.detailgetsx(data)
         }
 
@@ -608,7 +777,8 @@ class EventList extends React.Component {
         }
 
         const handleDetailcap = (data) => {
-            
+
+            document.cookie = "url_address=EventList";
             this.props.history.push({
                 pathname: "CapacityDetail",
                 search: "id="+data.id,
@@ -643,7 +813,7 @@ class EventList extends React.Component {
 
             
 
-                return  <span>
+                return  <span  className="opbtngrp">
 
                     {v.pid == 0 ? (
                          <Button type = "primary"  size = "small"
@@ -668,7 +838,7 @@ class EventList extends React.Component {
 
 
             }  else if(v.event_type == 1){
-                  return  <span>
+                  return  <span   className="opbtngrp">
                       {v.pid == 0 ? (
                            <Button type = "primary"  size = "small"
                            onClick = {() => handleDetail(v)}
@@ -699,23 +869,42 @@ class EventList extends React.Component {
                 title: '事件id',
                 dataIndex: 'id',
                 width: "100px",
-                align: "center",
-                render: (text, data) => (
-                    <div className="nameclickd"> 
-                        {data.pid == 0 && !data.children && data.child_status ? (
-                            <button type="button" className="ant-table-row-expand-icon ant-table-row-expand-icon-collapsed"  onClick = {() => subhandleDetail(data)} ></button>
+                align: "right",
+
+                render: (text, data, index) => {
+
+                    const obj = {
+                        children: data.event_name ? text : <Button type="link" onClick={ () => morethanfinve(data) }> 查看更多 </Button>,
+                        props: {},
+                      };
+
+                      if(data.pid == 0 && !data.children && data.child_status) {
+                          return  <div  className="nameclickd">
+                                     
+                                
+                                        <button type="button" className="ant-table-row-expand-icon ant-table-row-expand-icon-collapsed"  onClick = {() => subhandleDetail(data)} ></button>
+                                        
+                                        <span>
+                                            {data.id}
+                                        </span> 
+                                     
+                                </div>
                             
-                        ):("")
-                        }
+                           
+
+                      }
+
+                     if ( !data.event_name ) {
+                        obj.props.colSpan = 8;
                        
-                     
-                      <span>
-                      {data.id}
-                     </span> 
-                        
-                     
-                    </div>
-                )
+                         
+                      }
+                       
+                      return obj;
+                }
+
+                
+              
 
             },
             {
@@ -765,7 +954,7 @@ class EventList extends React.Component {
                 width: 120,
                 render: (text, data) => (
                     <span>
-                        {data.event_type == 1 ? "手动运营事件" : "自动推送事件"}
+                        {data.event_type == 1 ? "临时性事件" : "周期性事件"}
                     </span>
                 )
             },
@@ -808,10 +997,10 @@ class EventList extends React.Component {
 
         return (
             <div id="listlist"> 
-                   <Card title="事件运营" bordered={false}  > 
+                   <Card title="临时性事件" bordered={false}  > 
                         
                    
-                    <div id="eventlistspecialbtns">
+                   <div className="btnwrap">
                         <Button type="primary"  onClick={this.openCreate}>
                             创建事件
                         </Button>
@@ -820,37 +1009,9 @@ class EventList extends React.Component {
                     
                        
 
-                    <Tabs defaultActiveKey="2" onChange={this.callback}>
-                        
-                        <TabPane tab="自动推送事件" key="2">
-                        
-                            {this.state.tabledt ? (
-                                <Table dataSource={this.state.tabledt.length >= 1   ? this.state.tabledt : null} 
-                                    columns={columns}
-                                    onChange={this.onChange}
-                                    
-                                    defaultExpandAllRows={true}
-                                    rowKey="id"
-                                    pagination={{  
-                                        total: this.state.total, 
-                                        pageSize: this.state.pageSize, 
-                                        current: this.state.current,
-        
-
-                                    }}
-
-                                    
-                                />
-                            ) : ("")
-
-                            }
-
-                        </TabPane>
-                        <TabPane tab="手动运营事件" key="1">
-                            
-
+                  
                             <Row>
-                                <Col span={7}>
+                                <Col span={24} className="timerangercols">
 
                                     <label> 事件状态 ：</label>
                                     <Select defaultValue="" style={{ width: 170 }} onChange={this.handleChanges}>
@@ -860,26 +1021,27 @@ class EventList extends React.Component {
                                         <Option key="ozero3" value="3">  已结束 </Option>
                                         
                                     </Select>
-                                </Col>
-                                
-                                <Col span={9}>
-
+                               
+                                   
                                     <RangePicker  
-                                        
+                                         ranges={{
+                                            '当天': [moment().startOf('day'), moment().endOf('day')],
+                                            '近一周': [moment().subtract(7, 'days').startOf('day'), moment().endOf('day')],
+                                            '近一个月': [moment().subtract(30, 'days').startOf('day'), moment().endOf('day')],
+                                            '近三个月': [moment().subtract(90, 'days').startOf('day'), moment().endOf('day')]
+                                        }}
                                         format="YYYY-MM-DD HH:mm:ss" 
                                         showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }} 
-                                        onChange={this.onChangetm}    
+                                        onChange={this.onChangetm}
+                                        onOk={this.onOks}
                                     />
 
+                                       
+                                  
+                                   
                                 
                                 </Col>
-                                <Col span={8}>
-
-                                    <Button type="primary"   onClick={this.check}>
-                                        查询
-                                    </Button>
-                                   
-                                </Col>
+                              
                             </Row>
 
 
@@ -901,24 +1063,29 @@ class EventList extends React.Component {
 
                                     
                                 />
-                            ) : ("")
+                            ) : (
+                             
+
+                                <div className="flowertrans">
+
+                                        <Spin indicator={antIcon} />
+                                </div>
+                            )
 
                             }
 
-                        </TabPane>
-                    </Tabs>
-
-                    
+                      
 
 
                    
                     </Card>
                     {this.state.pidlists ? (
-                        <CreateEvent 
+                        <CreateEventHand 
                         ref={this.wrapper}  
                         visible={this.state.visible}
                         tabledt={this.state.pidlists}
-                    
+                        eventChainChildren = {this.state.eventChainChildren}
+                        eventChain = {this.state.eventChain}
                         openmodals={bgChange} 
                         gotocapacity={agotocapacity} 
                         refreshlist={this.refreshlista} />
@@ -926,7 +1093,17 @@ class EventList extends React.Component {
                     ): ("")}
                     
 
-                  
+                        {/* autodelisModalVisible */}
+
+                     <Modal title={`提示`}
+                        okText="删除"
+                        visible={this.state.autodelisModalVisible} 
+                        onOk={this.autohandleOk} 
+                        onCancel={this.autohandleCancel}>
+                       确认删除吗？
+                    </Modal>
+
+
                     <Modal title={`提示`}
                         okText="删除"
                         visible={this.state.delisModalVisible} 
@@ -941,4 +1118,4 @@ class EventList extends React.Component {
     
 }
 
-export default withRouter(EventList);
+export default withRouter(EventListHand);
