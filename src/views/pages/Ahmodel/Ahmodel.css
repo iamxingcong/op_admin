@@ -1,0 +1,52 @@
+.box{
+    height: 45px;
+    border-bottom: 3px solid rgb(199, 194, 194);
+    margin-bottom: 20px;
+}
+.box_p{
+    line-height: 45px;
+    font-size: 15px;
+    font-weight: bold;
+}
+.Button{
+    border-radius: 10%;
+}
+.box_Button{
+    width: 19vw;
+    height: auto;
+    display: flex;
+    justify-content:space-around;
+    float: right;
+}
+.inputvalue{
+    border: 1px solid rgb(147, 140, 140);
+    outline:none;
+}
+.batch{
+    position: absolute;
+    top: 11px;
+    right: 12px;
+}
+.chunk2{
+    position: relative;
+}
+.inco{
+    color: cyan;
+    background-color: cyan;
+}
+.chunk2 .ant-table-cell .anticon-check-circle{
+
+
+    color: #ffffff;
+    background-color: #1890ff;
+    width: 14px;
+    height: 14px;
+    border-radius: 14px;
+    -webkit-border-radius: 14px;
+}
+.incons{
+    color: #555;
+}
+.btngo{
+    margin-left: 10px;
+}

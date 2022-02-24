@@ -1,0 +1,29 @@
+.seek {
+    margin-top: 1vh;
+    height: 7vh;
+}
+
+.box1 {
+    float: left;
+    margin-left: 1vw;
+}
+
+.echarts {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+.bar {
+    width: 35vw;
+}
+
+.pie {
+    width: 35vw;
+}
+.tofill{
+    margin-left: 5px;
+    font-weight: 500;
+    color: black;
+    width: 5rem;
+}

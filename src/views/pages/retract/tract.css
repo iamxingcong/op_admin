@@ -1,0 +1,32 @@
+.boxs{
+ 
+    width: 100%;
+    height: auto;
+    display: block;
+    
+    float: right;
+}
+ 
+.boxs div{
+ 
+    width: 19%;
+    height: 75px;
+    text-align: center;
+    padding-top: 10px;
+    border: 3px rgb(20, 135, 89) solid;
+    box-shadow: 5px 5px;
+    font-weight: bold;
+    border-radius: 5%;
+    float: left;
+    margin-left: 1%;
+    max-width: 250px;
+}
+.col{
+    color: rgb(20, 135, 89);
+}
+ 
+.boxs p {
+    font-size: 0.5rem;
+}
+ 
+ 

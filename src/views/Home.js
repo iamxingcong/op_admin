@@ -10,19 +10,26 @@ import {
 } from "react-router-dom";
 
 import EventList from "./pages/EventList.js"
-
+import EventListHand from './pages/EventListHand.js'
 import EventDetail from "./pages/EventDetail.js"
 import CapacityDetail from "./pages/CapacityDetail.js"
 import CapacityChildDetail from './pages/CapacityChildDetail.js'
-
+import CapacityChildDetailAuto from './pages/CapacityChildDetailAuto.js'
+import CapacityList from './pages/CapacityList.js'
+import EventListAuto from './pages/EventListAuto.js'
 import Sidediv from "./Sidediv.js"
-
+import Taslist from './pages/Tasklist/list'
+import Ahmodel from './pages/Ahmodel/Ahmodel.jsx';
+import Details from './pages/Tasklist//details/details';
 const routes = [
     {
         path: "/EventList",
         component: EventList
     },
-
+    {
+        path: '/EventListHand',
+        component: EventListHand
+    },
     {
         path: "/EventDetail",
         component: EventDetail
@@ -32,9 +39,33 @@ const routes = [
         component: CapacityDetail
     },
     {
+        path: "/CapacityChildDetailAuto",
+        component: CapacityChildDetailAuto,
+    },
+    {
         path: "/CapacityChildDetail",
         component: CapacityChildDetail,
-    }
+    },
+    {
+        path: "/EventListAuto",
+        component: EventListAuto,
+    },
+    {
+        path: "/CapacityList",
+        component: CapacityList
+    },
+    {
+        path:'/Taslist',
+        component: Taslist
+    },
+    {
+        path:'/Ahmodel',
+        component: Ahmodel
+    },
+    {
+        path:'/Details',
+        component: Details,
+    },
 ];
 
 
@@ -46,9 +77,9 @@ function Home() {
         <Router>
 
 
-            <Layout>
+            <div id="bigcontents">
                 <Sidediv />
-                <Layout>
+                <div id="rightcontentwrp">
 
                     <Content>
 
@@ -71,8 +102,8 @@ function Home() {
                         </Switch>
                     </Content>
 
-                </Layout>
-            </Layout>
+                </div>
+            </div>
 
 
         </Router>

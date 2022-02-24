@@ -1,11 +1,13 @@
 import React   from 'react';
 
-import { Button, Modal, Form, Input, Select, Row, Col, DatePicker, InputNumber, Cascader, notification } from 'antd';
+import { Button, Modal, Form, Input, Select, Row, Col, DatePicker, InputNumber, Cascader, notification , Spin  } from 'antd';
 
 import {
     
     MinusCircleOutlined,
-    PlusCircleOutlined
+    PlusCircleOutlined,
+    LoadingOutlined,
+
   } from '@ant-design/icons';
 
 
@@ -19,8 +21,11 @@ import { APIURL } from '../../common/constdt.js'
 const { Option } = Select;
 
 
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+
+
  
-var tempar = []
+let tempar = []
 
 
 
@@ -66,6 +71,7 @@ class EditEvent extends React.Component {
 
         }
 
+        this.hideModalcls = this.hideModalcls.bind(this);
         this.hideModal = this.hideModal.bind(this);
         this.onFinish = this.onFinish.bind(this);
 
@@ -80,120 +86,27 @@ class EditEvent extends React.Component {
         this.linkinfcarraysub = this.linkinfcarraysub.bind(this)
     }
 
-    componentDidMount() {
-       
    
-        this.newagetRates()
-        
-    }
-
-    async newagetRates() {
-
-        const urlsx = `${APIURL}/capacity/newMenu`;
-
-        var that = this;
-        await axios.get(urlsx, { withCredentials: true })
-            .then(function (response) {
-
-
-                console.log(response.data.data);
-
-                let array_one = []
-                if (response.data.data) {
-
-                    that.setState({
-                        eventChain: response.data.data
-
-                    })
-
-                    for (let h = 0; h < response.data.data.length; h++) {
-                        let obj_one = {}
-                        obj_one.label = response.data.data[h].cateName;
-                        obj_one.value = response.data.data[h].cate;
-                        obj_one.children = []
-                        array_one.push(obj_one)
-
-
-                        let array_two = []
-                        if (response.data.data[h].menu) {
-
-                            for (let j = 0; j < response.data.data[h].menu.length; j++) {
-                                let obj_two = {}
-                                obj_two.label = response.data.data[h].menu[j].pName;
-                                obj_two.value = response.data.data[h].menu[j].pType;
-
-                                array_two.push(obj_two)
-
-
-
-                                let array_three = []
-
-
-                                if (response.data.data[h].menu[j].menu && response.data.data[h].menu[j].menu.length >= 1 && response.data.data[h].menu[j].menu[0].cate) {
-
-                                    for (let k = 0; k < response.data.data[h].menu[j].menu.length; k++) {
-                                        let obj_three = {}
-                                        obj_three.label = response.data.data[h].menu[j].menu[k].subName;
-                                        obj_three.value = response.data.data[h].menu[j].menu[k].subType;
-                                        array_three.push(obj_three)
-                                    }
-                                    array_two[j].children = array_three
-
-                                } else {
-                                    let obj_three = {}
-                                    obj_three.label = "_";
-                                    obj_three.value = "_";
-                                    array_three.push(obj_three)
-                                }
-
-
-                            }
-                            array_one[h].children = array_two
-                        }
-                        // new menus
-                        that.setState({
-                            eventChainChildren: array_one
-
-                        })
-                    }
-
-
-                    console.log(array_one);
-
-
-                }
-
-            })
-            .catch(function (error) {
-                console.log(error);
-                notification.error({
-                    message: '提示',
-                    description: error.message,
-                    duration: 60,
-                    placement: 'topCenter',
-                    onClick: () => {
-                    console.log('Notification Clicked!');
-                    },
-                });
-            })
-    }
-
- 
 
 
 
     hideModal() {
 
+       
 
         this.props.openmodals(false)
         
 
     };
 
+    hideModalcls() {
+        this.props.openmodalsocls(false)
+    }
+
+
+
     onFinish(values) {
-      
-        console.log('Success:', values);
-        console.log(  values.end_time.format('YYYY-MM-DD HH:mm:ss') )
+     
 
         let templinkar = []
         tempar = []
@@ -233,7 +146,7 @@ class EditEvent extends React.Component {
     
                     return false;
                 }
-                console.log(deduplication);
+                 
             }
     
     
@@ -272,7 +185,7 @@ class EditEvent extends React.Component {
     
                     return false;
                 }
-                console.log(deduplication);
+                 
             }
     
     
@@ -281,7 +194,18 @@ class EditEvent extends React.Component {
             }
         }
       
-        
+        if(this.props.detail.id == values.pid){
+            notification.error({
+                message: '提示',
+                description: '父事件不能为自己！！',
+                duration: 60,
+                placement: 'topCenter',
+                onClick: () => {
+                  console.log('Notification Clicked!');
+                },
+            });
+            return false;
+        }
 
        
         this.setState({
@@ -309,8 +233,7 @@ class EditEvent extends React.Component {
         })
         
        
-        console.log(this.state.end_time <= this.state.start_time)
-        
+   
         if(this.state.end_time <= this.state.start_time  && values.event_type == 1){
             
             notification.error({
@@ -340,22 +263,22 @@ class EditEvent extends React.Component {
     }
 
     onChangetmb(ts, ta) {
-        console.log(ts, ta)
+       
         this.setState({
 
             end_time: ta,
 
         })
-        console.log(this.state)
+       
     }
 
     onChangetm(ts, ta) {
-        console.log(ts, ta)
+       
         this.setState({
             start_time: ta,
 
         })
-        console.log(this.state)
+       
     }
 
     async eventInfonewBuild() {
@@ -382,7 +305,11 @@ class EditEvent extends React.Component {
 
         if(this.state.webhook){
             bodyFormData.append("webhook", this.state.webhook);
+        } else {
+            bodyFormData.append("webhook", '');
         }
+
+
         if(this.state.event_desc){
             bodyFormData.append("event_desc", this.state.event_desc);
         }
@@ -431,7 +358,7 @@ class EditEvent extends React.Component {
         }
     
     
-        console.log(this.state.clink_info)
+       
 
         if(this.state.clink_info){
             bodyFormData.append("link_info", JSON.stringify(this.state.clink_info));
@@ -445,7 +372,7 @@ class EditEvent extends React.Component {
         await axios.post(url, bodyFormData, { withCredentials: true })
             .then(function (response) {
       
-                debugger;
+              
                 if (response.data.code == 0) {
 
                     notification.success({
@@ -456,8 +383,9 @@ class EditEvent extends React.Component {
                           console.log('Notification Clicked!');
                         },
                     });
-                     that.hideModal();
-                     window.location.reload();
+                  
+                   that.hideModal();
+                   
 
                 } else {
                     
@@ -484,13 +412,15 @@ class EditEvent extends React.Component {
 
                 notification.error({
                     message: '提示',
-                    description: error.msg,
+                    description: "网络接口错误！",
                     duration: 60,
                     placement: 'topCenter',
                     onClick: () => {
                       console.log('Notification Clicked!');
                     },
                 });
+
+
                 that.setState({
                     btndisabled: false,
                 })
@@ -506,7 +436,7 @@ class EditEvent extends React.Component {
         this.setState({
             event_type: value,
         });
-        console.log(this.props.detail.event_type)
+       
     };
 
     onChangea = (value) => {
@@ -518,11 +448,7 @@ class EditEvent extends React.Component {
     }
 
     linkinfcarraysub(){
-         
-        console.log('add s+')
-        console.log(this.state.temp_link_list)
-        console.log(this.props.link_list)
-
+   
 
         let templinkar = []
 
@@ -545,16 +471,12 @@ class EditEvent extends React.Component {
             temp_link_list: templinkar
         })
 
-        console.log(this.state.temp_link_list)
+      
 
        
      }
 
     linkinfcarray(){
-         
-        console.log('add s')
-        console.log(this.state.temp_link_list)
-        console.log(this.props.link_list)
 
 
         let templinkar = []
@@ -578,7 +500,7 @@ class EditEvent extends React.Component {
             temp_link_list: templinkar
         })
 
-        console.log(this.state.temp_link_list)
+      
 
        
      }
@@ -638,28 +560,63 @@ class EditEvent extends React.Component {
         
     }
 
+
     finishlinkinfos(value) {
 
-
-        if (value.length == 2) {
-            for (let i = 0; i < this.state.eventChain.length; i++) {
-
-
-                if (value[0] === this.state.eventChain[i].cate) {
+         
+       
+        if(value.length == 2) {
+            for (let i = 0; i < this.props.eventChain.length; i++) {
 
 
-
-
-                    for (let j = 0; j < this.state.eventChain[i].menu.length; j++) {
-
-
-
-                        if (value[1] === this.state.eventChain[i].menu[j].pType) {
+                if (value[0] === this.props.eventChain[i].cateName) {
 
 
 
 
-                            let sob = this.state.eventChain[i].menu[j];
+                    for (let j = 0; j < this.props.eventChain[i].menu.length; j++) {
+
+
+
+                        if (value[1] === this.props.eventChain[i].menu[j].pName) {
+
+
+
+
+                            let sob = this.props.eventChain[i].menu[j];
+                            delete sob.menu
+                            console.log(sob)
+
+                            tempar.push(sob)
+                          
+                            this.setState({
+                                clink_info: tempar
+                            })
+
+
+                        }
+                    }
+                }
+            }
+        } else  if (value.length == 3 && value[2].length == 0) {
+            for (let i = 0; i < this.props.eventChain.length; i++) {
+
+
+                if (value[0] === this.props.eventChain[i].cateName) {
+
+
+
+
+                    for (let j = 0; j < this.props.eventChain[i].menu.length; j++) {
+
+
+
+                        if (value[1] === this.props.eventChain[i].menu[j].pName) {
+
+
+
+
+                            let sob = this.props.eventChain[i].menu[j];
                             delete sob.menu
                             console.log(sob)
 
@@ -673,50 +630,23 @@ class EditEvent extends React.Component {
                     }
                 }
             }
-        } else if (value.length == 3 && value[2].length == 0) {
-            for (let i = 0; i < this.state.eventChain.length; i++) {
-
-                if (value[0] === this.state.eventChain[i].cate) {
-
-                    for (let j = 0; j < this.state.eventChain[i].menu.length; j++) {
-
-                        if (value[1] === this.state.eventChain[i].menu[j].pType) {
-
-                            let sob = this.state.eventChain[i].menu[j];
-                            delete sob.menu
-                            console.log(sob)
-
-                            tempar.push(sob)
-                            this.setState({
-                                clink_info: tempar
-                            })
-
-
-                        }
-                    }
-                }
-            }
-
         } else if (value.length == 3) {
-            for (let k = 0; k < this.state.eventChain.length; k++) {
+            for (let k = 0; k < this.props.eventChain.length; k++) {
 
 
-                if (value[0] === this.state.eventChain[k].cate) {
+                if (value[0] === this.props.eventChain[k].cateName) {
 
+                    for (let l = 0; l < this.props.eventChain[k].menu.length; l++) {
 
-                    for (let l = 0; l < this.state.eventChain[k].menu.length; l++) {
+                        if (value[1] === this.props.eventChain[k].menu[l].pName) {
 
-                        if (value[1] === this.state.eventChain[k].menu[l].pType) {
+                            for (let f = 0; f < this.props.eventChain[k].menu[l].menu.length; f++) {
 
+                                if (value[2] === this.props.eventChain[k].menu[l].menu[f].subName) {
 
-                            for (let f = 0; f < this.state.eventChain[k].menu[l].menu.length; f++) {
-
-                                if (value[2] === this.state.eventChain[k].menu[l].menu[f].subType) {
-
-
-                                    console.log(this.state.eventChain[k].menu[l].menu[f])
-
-                                    tempar.push(this.state.eventChain[k].menu[l].menu[f])
+                                    
+                                    
+                                    tempar.push(this.props.eventChain[k].menu[l].menu[f])
                                     this.setState({
                                         clink_info: tempar
                                     })
@@ -727,10 +657,13 @@ class EditEvent extends React.Component {
                     }
                 }
             }
-        } 
-
-
+        }else{
+            this.setState({
+                clink_info: null
+            })
+        }
     }
+
     
  
 
@@ -759,15 +692,7 @@ class EditEvent extends React.Component {
             })
             .catch(function (error) {
                 console.log(error);
-                notification.error({
-                    message: '提示',
-                    description: error.message,
-                    duration: 60,
-                    placement: 'topCenter',
-                    onClick: () => {
-                    console.log('Notification Clicked!');
-                    },
-                });
+                 
 
             })
 
@@ -787,7 +712,7 @@ class EditEvent extends React.Component {
                     maskClosable={false}
                     centered
                     visible={this.props.visible}
-                    onCancel={this.hideModal}
+                    onCancel={this.hideModalcls}
                     width={1120}
                     footer={null}
                     destroyOnClose={true}
@@ -795,7 +720,7 @@ class EditEvent extends React.Component {
                 >
 
 
-                    {this.props.detail && this.props.tabledt ? (
+                    {this.props.detail && this.props.tabledt  ? (
 
 
                         <Form
@@ -836,8 +761,8 @@ class EditEvent extends React.Component {
                                     disabled
                                 >
 
-                                    <Option value={1}> 手动运营事件 </Option>
-                                    <Option value={2}> 自动推送事件 </Option>
+                                    <Option value={1}> 临时性事件 </Option>
+                                    <Option value={2}> 周期性事件 </Option>
 
                                 </Select>
                             </Form.Item>
@@ -990,7 +915,7 @@ class EditEvent extends React.Component {
                                     <Row>
                                           <Col span={12}>
                                             <Form.Item
-                                                label="容量指标"
+                                                label="运营指标"
                                                 name="capacity_quota"
                                                  
                                             >
@@ -999,7 +924,7 @@ class EditEvent extends React.Component {
                                         </Col> 
                                         <Col span={12}>
                                             <Form.Item
-                                                label="容量单位"
+                                                label="运营单位"
                                                 name="unit_capacity"
 
                                             >
@@ -1023,94 +948,7 @@ class EditEvent extends React.Component {
                             ) : ("")}
                             
 
-                                <div>
-                                    {this.props.filemap ? (
-                                        <Row>
-                                             <Col span={12}>
-                                             <Form.Item
-                                                label="实时数据url"
-                                                name="op_url"
-                                            >
-                                                <Input  />
-                                            </Form.Item>
-                                            </Col>
-                                            <Col span={12}>
-                                            <Form.Item
-                                                label="映射字段"
-                                                name="url_field"
-
-                                            >
-                                                <Select
-
-                                                    style={{ width: 200 }}
-                                                    placeholder="Search to Select"
-                                                    optionFilterProp="children"
-
-                                                >
-                                                    <Option value="1" key="00z">Not Identified</Option>
-                                                    {this.props.mapdt ? (
-                                                        this.props.mapdt.map(function (i, t) {
-                                                            return (<Option value={i} key={t}> {i} </Option>)
-                                                        })
-
-                                                    ) : ("")}
-
-                                                </Select>
-                                            </Form.Item>
-                                            </Col>
-                                        
-                                        </Row>
-                                    ) : (
-                                            ""
-
-                                        )}
-
-                                    
-                                        <Row>
-                                            {!this.props.filemap ? (
-                                                <Col span={12}>
-                                                <Form.Item
-                                                    label="实时数据url"
-                                                    name="op_url"
-                                                >
-                                                    <Input onBlur={this.onBlur} />
-                                                </Form.Item>
-                                                </Col>
-                                            ) : ("")}
-
-                                            {this.state.filemap ? (
-                                            <Col span={12}>
-                                            <Form.Item
-                                                label="映射字段"
-                                                name="url_field"
-
-                                            >
-                                                <Select
-
-                                                    style={{ width: 200 }}
-                                                    placeholder="Search to Select"
-                                                    optionFilterProp="children"
-
-                                                >
-                                                    <Option value="1" key="00z">Not Identified</Option>
-                                                    {this.state.mapdt ? (
-                                                        this.state.mapdt.map(function (i, t) {
-                                                            return (<Option value={i} key={t}> {i} </Option>)
-                                                        })
-
-                                                    ) : ("")}
-
-                                                </Select>
-                                            </Form.Item>
-                                            </Col>
-                                             ) : (
-                                                ""
-    
-                                            )}
-                                        </Row>
-
                                 
-                           </div>
                            
                                <div>
                                             
@@ -1149,7 +987,7 @@ class EditEvent extends React.Component {
                            
                            {this.props.link_list && this.props.link_list.length >= 1 ? (
 
-                                this.state.eventChainChildren && !this.state.linkinfotouched ? (
+                                this.props.eventChainChildren && !this.state.linkinfotouched ? (
                                                                         
                                     <div>
 
@@ -1164,7 +1002,7 @@ class EditEvent extends React.Component {
 
                                                     
                                                     <Form.Item  label={index == 0 ? "活动链路" : ""}  initialValue={a} name={`link_info`+index}    key={index+a[0]}   rules={[{ required: true }]}>
-                                                            <Cascader options={this.state.eventChainChildren }  onChange={this.onChangea} placeholder="Please select" key={index+a[0]}  />
+                                                            <Cascader options={this.props.eventChainChildren }  onChange={this.onChangea} placeholder="Please select" key={index+a[0]}  />
                                                     </Form.Item>
                                                     </div>
                                                     </Col>
@@ -1198,7 +1036,7 @@ class EditEvent extends React.Component {
 
                                                 
                                                 <Form.Item  label={index == 0 ? "活动链路" : ""}  initialValue={a} name={`link_info`+index}   key={index+a[0]}   rules={[{ required: true }]}>
-                                                        <Cascader options={this.state.eventChainChildren }  onChange={this.onChangea} placeholder="Please select"   />
+                                                        <Cascader options={this.props.eventChainChildren }  onChange={this.onChangea} placeholder="Please select"   />
                                                 </Form.Item>
                                                 </div>
                                                 </Col>
@@ -1230,7 +1068,7 @@ class EditEvent extends React.Component {
                                 <Col span={12}>
 
                                 <Form.Item name="link_info0" label="活动链路" rules={[{ required: true }]}>
-                                    <Cascader options={this.state.eventChainChildren} onChange={this.onChangea} placeholder="Please select" />
+                                    <Cascader options={this.props.eventChainChildren} onChange={this.onChangea} placeholder="Please select" />
                                 </Form.Item>
                                 </Col>
                             </Row>
@@ -1257,10 +1095,20 @@ class EditEvent extends React.Component {
 
 
 
-                    ) : ("")}
+                    ) : (
+
+                       ""
+
+                    )}
 
 
                         
+                        {this.state.btndisabled ? (
+                            <div className="editspindx">  <Spin indicator={antIcon} />  </div>
+                        ): (
+                            ""
+                        )}
+
                 </Modal>
 
              

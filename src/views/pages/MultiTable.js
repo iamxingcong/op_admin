@@ -22,7 +22,8 @@ class MultiTable extends React.Component {
 
       onFinish = (values) => {
              
-        console.log('Success:', values);
+       
+        
        
         for(let i in values){
             if(!values[i]){

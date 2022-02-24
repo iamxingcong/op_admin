@@ -60,15 +60,7 @@ export default class StaticResource extends React.Component {
         })
         .catch(function (error) {
           console.log(error);
-          notification.error({
-            message: '提示',
-            description: error.message,
-            duration: 60,
-            placement: 'topCenter',
-            onClick: () => {
-            console.log('Notification Clicked!');
-            },
-        });
+         
         })
   
 
@@ -76,9 +68,7 @@ export default class StaticResource extends React.Component {
     }
     adddiv(v) {
       
- 
 
-        console.log(v)
         this.setState({
             opendiv: true,
         })
@@ -162,15 +152,7 @@ export default class StaticResource extends React.Component {
            })
            .catch(function (error) {
              console.log(error);
-             notification.error({
-                message: '提示',
-                description: error.message,
-                duration: 60,
-                placement: 'topCenter',
-                onClick: () => {
-                console.log('Notification Clicked!');
-                },
-            });
+             
            })
     }
 
@@ -196,7 +178,7 @@ export default class StaticResource extends React.Component {
              
                 notification.success({
                     message: '提示',
-                    description: '"删除成功！"',
+                    description: '删除成功！',
                     placement: 'topCenter',
                     onClick: () => {
                       console.log('Notification Clicked!');
@@ -218,15 +200,7 @@ export default class StaticResource extends React.Component {
         })
         .catch(function (error) {
           console.log(error);
-          notification.error({
-            message: '提示',
-            description: error.message,
-            duration: 60,
-            placement: 'topCenter',
-            onClick: () => {
-            console.log('Notification Clicked!');
-            },
-        });
+         
         })
        
 
@@ -284,15 +258,7 @@ export default class StaticResource extends React.Component {
         .catch(function (error) {
           console.log(error);
             
-            notification.error({
-                message: '提示',
-                description: error.message,
-                duration: 60,
-                placement: 'topCenter',
-                onClick: () => {
-                console.log('Notification Clicked!');
-                },
-            });
+           
 
         })
     }

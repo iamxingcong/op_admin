@@ -1,7 +1,7 @@
 import React from 'react';
-import { Tabs, Card, Row, Col, Button, Select, InputNumber, notification, Tooltip } from 'antd';
+import { Tabs, Card, Row, Col, Button, Select, InputNumber, notification, Tooltip, Spin } from 'antd';
 import { withRouter } from 'react-router-dom';
-
+import {  LoadingOutlined  } from '@ant-design/icons';
 
 import axios from "axios";
 
@@ -24,6 +24,7 @@ const { TabPane } = Tabs;
 
 const { Option } = Select;
 
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 class EventDetail extends React.Component {
     constructor(props) {
@@ -54,9 +55,10 @@ class EventDetail extends React.Component {
       
        
         var url_string = window.location.href.replace(/\/#/g,"")
-        console.log(url_string)
+
         var url = new URL(url_string);
-        console.log(url)
+     
+        
         var id = url.searchParams.get("id");
        
        
@@ -69,15 +71,15 @@ class EventDetail extends React.Component {
         this.getnm()
     }
 
+
+
     
     async getnm(){
-        // https://iwiki.woa.com/pages/viewpage.action?pageId=602598584
-        // it seems this do not work, why
-        // it works only online, do not work localhost
+
         var that = this
         await axios.get("/ts:auth/tauth/info", { withCredentials: true })
             .then(function(r){
-                console.log(r)
+            
                 that.setState({
                     EngName: r.data.EngName
                 })
@@ -102,8 +104,6 @@ class EventDetail extends React.Component {
     async capacityprevalue(v){
       
 
-       
-        console.log(v)
       
         var bodyFormData = new FormData();
         bodyFormData.append("event_id", this.state.id);
@@ -162,15 +162,7 @@ class EventDetail extends React.Component {
         })
         .catch(function (error) {
             console.log(error);
-            notification.error({
-                message: '提示',
-                description: error.message,
-                duration: 60,
-                placement: 'topCenter',
-                onClick: () => {
-                console.log('Notification Clicked!');
-                },
-            });
+            
         })
     
         
@@ -219,9 +211,7 @@ class EventDetail extends React.Component {
                 });
 
               } else {
-                  console.log(response)
                   
-
                 notification.error({
                     message: '提示',
                     description: response.data.msg,
@@ -237,15 +227,7 @@ class EventDetail extends React.Component {
             })
             .catch(function (error) {
               console.log(error);
-              notification.error({
-                message: '提示',
-                description: error.message,
-                duration: 60,
-                placement: 'topCenter',
-                onClick: () => {
-                console.log('Notification Clicked!');
-                },
-            });
+              
            
             })
         }
@@ -265,7 +247,13 @@ class EventDetail extends React.Component {
         
 
         var that = this
-        await axios.get(urlsx, { withCredentials: true })
+        await axios.get(urlsx, 
+            { withCredentials: true,
+                params: {
+                
+                    event_type: 1,
+                } 
+            })
             .then(function (response) {
               
                 if (response.data) {
@@ -281,15 +269,7 @@ class EventDetail extends React.Component {
             })
             .catch(function (error) {
                 console.log(error);
-                notification.error({
-                    message: '提示',
-                    description: error.message,
-                    duration: 60,
-                    placement: 'topCenter',
-                    onClick: () => {
-                    console.log('Notification Clicked!');
-                    },
-                });
+                
             })
     }
 
@@ -316,15 +296,7 @@ class EventDetail extends React.Component {
            })
            .catch(function (error) {
              console.log(error);
-             notification.error({
-                message: '提示',
-                description: error.message,
-                duration: 60,
-                placement: 'topCenter',
-                onClick: () => {
-                console.log('Notification Clicked!');
-                },
-            });
+           
              
            })
             
@@ -338,6 +310,11 @@ class EventDetail extends React.Component {
 
     async agetRates (t){
 
+        this.setState({
+                        
+            detail: null,
+            
+        })
       
         const urlsx = `${APIURL}/eventInfo/detail?event_id=${t}`;
 
@@ -350,7 +327,7 @@ class EventDetail extends React.Component {
                     let link_list = []
                     if(response.data.data.link_list && response.data.data.link_list.length >=1){
                         for(let i = 0; i < response.data.data.link_list.length;i++){
-                            let tp = [response.data.data.link_list[i].cate, response.data.data.link_list[i].pType, response.data.data.link_list[i].subType]
+                            let tp = [response.data.data.link_list[i].cateName, response.data.data.link_list[i].pName, response.data.data.link_list[i].subName];
                             link_list.push(tp)
                         }
                     }
@@ -371,15 +348,7 @@ class EventDetail extends React.Component {
             })
             .catch(function (error) {
                 console.log(error);
-                notification.error({
-                    message: '提示',
-                    description: error.message,
-                    duration: 60,
-                    placement: 'topCenter',
-                    onClick: () => {
-                    console.log('Notification Clicked!');
-                    },
-                });
+                
             })
     }
 
@@ -387,12 +356,12 @@ class EventDetail extends React.Component {
     callback(key) {
 
        
-        console.log(key);
+      
         this.setState({
             defaultActiveKey: key,
         })
         if(key == "checklist"){
-            console.log("checklist ____ p")
+          
 
             this.refs.checklists.cklists()
         }
@@ -400,35 +369,138 @@ class EventDetail extends React.Component {
 
 
     goback() {
+
        
-        this.props.history.push({
-            pathname: "EventList",
-           
-         }); 
+        console.log(this.state.detail)
+       
+        if(this.state.detail.event_type == 1){
+            this.props.history.push({
+                pathname: "EventListHand",
+               
+             }); 
+        }else {
+            this.props.history.push({
+                pathname: "EventList",
+               
+             }); 
+        }
+        
 
     }
 
     edit(v){
         
+        this.newagetRates()
+        
         console.log(v)
-
-        this.setState({
-            visible: true,
-        })
     }
 
     
+    async newagetRates() {
+
+        const urlsx = `${APIURL}/capacity/newMenu`;
+
+        var that = this;
+        await axios.get(urlsx, { withCredentials: true })
+            .then(function (response) {
+
+
+              
+
+                let array_one = []
+                if (response.data.code == 0) {
+
+                    that.setState({
+                        eventChain: response.data.data
+
+                    })
+
+                    for (let h = 0; h < response.data.data.length; h++) {
+                        let obj_one = {}
+                        obj_one.label = response.data.data[h].cateName;
+                        obj_one.value = response.data.data[h].cateName;
+                        obj_one.children = []
+                        array_one.push(obj_one)
+
+
+                        let array_two = []
+                        if (response.data.data[h].menu) {
+
+                            for (let j = 0; j < response.data.data[h].menu.length; j++) {
+                                let obj_two = {}
+                                obj_two.label = response.data.data[h].menu[j].pName;
+                                obj_two.value = response.data.data[h].menu[j].pName;
+
+                                array_two.push(obj_two)
+
+
+
+                                let array_three = []
+
+
+                                if (response.data.data[h].menu[j].menu && response.data.data[h].menu[j].menu.length >= 1 && response.data.data[h].menu[j].menu[0].link_id) {
+
+                                    for (let k = 0; k < response.data.data[h].menu[j].menu.length; k++) {
+                                        let obj_three = {}
+                                        obj_three.label = response.data.data[h].menu[j].menu[k].subName;
+                                        obj_three.value = response.data.data[h].menu[j].menu[k].subName;
+                                        array_three.push(obj_three)
+                                    }
+                                    array_two[j].children = array_three
+
+                                } else {
+                                    let obj_three = {}
+                                    obj_three.label = "_";
+                                    obj_three.value = "_";
+                                    array_three.push(obj_three)
+                                }
+
+
+                            }
+                            array_one[h].children = array_two
+                        }
+                        // new menus
+                     
+                        
+                        that.setState({
+                            eventChainChildren: array_one,
+                            visible: true,
+
+                        })
+                    }
+
+
+
+
+                }
+
+            })
+            .catch(function (error) {
+                console.log(error);
+                
+            })
+    }
+   
 
 
     render() {
         
 
-      
-
-        const   bgChange = (visible) => {
+        const clsbgChange = (visible) => {
             this.setState({
                 visible: visible
             })
+        }
+
+        const   bgChange = (visible) => {
+
+           
+            
+            this.setState({
+                visible: visible
+            })
+
+            this.agetRates(this.state.id)
         }
 
        const agotocapacity = (vt) => {
@@ -464,13 +536,18 @@ class EventDetail extends React.Component {
 
                     <Row>
                         <Col span={8}>
-                            事件类型：{  this.state.detail.event_type == 1 ? "手动运营事件" : "自动推送事件" }
+                          <label>
+                          事件类型：
+                          </label>  {  this.state.detail.event_type == 1 ? "临时性事件" : "周期性事件" }
                             
                         </Col>
                         <Col span={8}>
                           
-                                <span className="namelength440">
+                                <label>
                                 事件名称：
+                                </label>
+                                
+                                <span className="namelength440">
                                 <Tooltip   placement="topLeft"  title={this.state.detail.event_name}>
                                     {  this.state.detail.event_name  ?  this.state.detail.event_name: "--"}
                                  </Tooltip>
@@ -543,11 +620,11 @@ class EventDetail extends React.Component {
                     <Row>
                         <Col span={8}>
 
-                            活动时间：{  this.state.detail.start_time ?   this.state.detail.start_time + "至"  : "-" } 
+                        <label>活动时间：</label>{  this.state.detail.start_time ?   this.state.detail.start_time + "至"  : "-" } 
                             { this.state.detail.end_time ? this.state.detail.end_time : "-" }
                         </Col>
                         <Col span={8}>
-                            运营指标：
+                        <label>运营指标：</label>
                             { 
                                  this.state.detail.op_quota == 1 ? "同时在线" : "qps"
                             
@@ -591,7 +668,7 @@ class EventDetail extends React.Component {
                     </Row>
                     <Row>
                         <Col span={8}>
-                            负责人：
+                            <label>负责人：</label>
                             <Tooltip    placement="topLeft"  title={this.state.detail.event_users}>
 
                                 {  this.state.detail.event_users  ? this.state.detail.event_users: "--"}
@@ -634,7 +711,9 @@ class EventDetail extends React.Component {
 
             </Card>
            
-            ) : ("")}
+            ) : (
+                <div className="flowertrans">  <Spin indicator={antIcon} />  </div>
+            )}
 
             
                 <EditEvent 
@@ -645,8 +724,11 @@ class EventDetail extends React.Component {
                         link_list={this.state.link_list}
                         filemap={this.state.filemap}
                         mapdt={this.state.mapdt}
+                        eventChainChildren = {this.state.eventChainChildren}
+                        eventChain = {this.state.eventChain}
                         id={this.state.id}  
                         openmodals={bgChange} 
+                        openmodalsocls={clsbgChange}
                         gotocapacity={agotocapacity} />
 
             </div>

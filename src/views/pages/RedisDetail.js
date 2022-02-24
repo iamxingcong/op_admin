@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { Table, Form, InputNumber, Button , notification } from 'antd';
+import { Table, Form, InputNumber, Button , notification , Spin} from 'antd';
 
 import axios from "axios";
-
+import {  LoadingOutlined  } from '@ant-design/icons';
 import { APIURL } from '../../common/constdt.js';
 
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 
 
@@ -91,28 +92,20 @@ export default class RedisDetail extends React.Component {
           })
           .catch(function (error) {
             console.log(error);
-            notification.error({
-                message: '提示',
-                description: error.message,
-                duration: 60,
-                placement: 'topCenter',
-                onClick: () => {
-                console.log('Notification Clicked!');
-                },
-            });
+            
           })
     }
     onBlur(v){
-        console.log(v)
+      
+        
         this.setState({
             pre_qpscurrent: v
         })
         
     }
     async blurs(v){
-        console.log(v)
-        console.log(this.state.pre_qpscurrent)
-
+  
+        
 
         const url = `${APIURL}/redis/update`;
 
@@ -143,15 +136,7 @@ export default class RedisDetail extends React.Component {
           })
           .catch(function (error) {
             console.log(error);
-            notification.error({
-                message: '提示',
-                description: error.message,
-                duration: 60,
-                placement: 'topCenter',
-                onClick: () => {
-                console.log('Notification Clicked!');
-                },
-            });
+           
           })
     }
     async agetRates() {
@@ -177,15 +162,7 @@ export default class RedisDetail extends React.Component {
         })
         .catch(function (error) {
           console.log(error);
-          notification.error({
-            message: '提示',
-            description: error.message,
-            duration: 60,
-            placement: 'topCenter',
-            onClick: () => {
-            console.log('Notification Clicked!');
-            },
-        });
+           
         })
   
 
@@ -273,7 +250,10 @@ export default class RedisDetail extends React.Component {
                         
                     />
 
-                    ) : ("")}
+                    ) : (
+
+                        <div className="flowertrans">  <Spin indicator={antIcon} />  </div>
+                    )}
                     
 
                 </Form>
