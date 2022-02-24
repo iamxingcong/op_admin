@@ -12,7 +12,6 @@ import IasDetail from  './IasDetail'
  
 import StaticResource from './StaticResource'
 import OTTDetail from './OTTDetail'
-// import OTTDetail from './OTTDetail/OTTDetail';
 import RedisDetail from  "./RedisDetail"
 import StreamingMedia from "./StreamingMedia"
 

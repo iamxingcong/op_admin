@@ -37,7 +37,7 @@ export default class details extends Component {
     };
     componentDidMount() {
         // const urls = `${APIURL}/taskInsertDb/taskList`
-        const urlsr = `${APIURL}/task/taskDetail`
+        const urlsr = `${APIURL}/taskInsertDb/taskDetail`
         const id = this.props.location.search.slice(1)
         this.setState((prevState, props) => ({
             task_no:id,
@@ -62,7 +62,7 @@ export default class details extends Component {
 
     }
     enterLoading = index => {
-        const urlsr = `${APIURL}/task/taskDetail`
+        const urlsr = `${APIURL}/taskInsertDb/taskDetail`
         this.setState(({ loadings }) => {
             const newLoadings = [...loadings];
             newLoadings[index] = true;

@@ -17,7 +17,8 @@ const Ahmodel = () => {
     const [expand_type,setExpand_type] = useState(null)
     const id = useLocation()
     const urlid = id.search
-    const urlId = `link_id=${urlid.slice(1)}`
+    const urlId = urlid.slice(1)
+    console.log(urlId.charAt(urlId.length-1));
     const url = `${APIURL}/list/list?type=1&show_type=1&link_id=${urlId}`
     const urlg = `${APIURL}/capacityModel/bulkExpand`
     const showModals = () => {
@@ -151,7 +152,7 @@ const Ahmodel = () => {
             title: () => {
                 return (
                     <>
-                        {urlId.charAt(urlId.length-1) == 0? '新增百分比(%)': urlId.charAt(urlId.length-1) == 1?'新增台数':urlId.charAt(urlId.length-1) == 2?'新增核数':'新增百分比(%)'}
+                        {urlId.charAt(urlId.length-1) == 0? '按比例扩容': urlId.charAt(urlId.length-1) == 1?'根据数量扩容':urlId.charAt(urlId.length-1) == 2?'根据核数扩容':'按比例扩容'}
                         <Button type="primary" className='btngo' onClick={showModals}>
                             批量设置
                         </Button>
@@ -270,7 +271,7 @@ const Ahmodel = () => {
                             <a href={yescode} target="_blank">{yescode}</a>
                         </p>
                     </Modal>
-                    <Link to={{ pathname: `/Taslist` ,search: urlId }}>
+                    <Link to={{ pathname: `/Taslist` ,search: urlId}}>
                         <Button type="primary">
                             操作记录
                         </Button>
@@ -309,7 +310,7 @@ const Ahmodel = () => {
                     autoComplete="off"
                 >
                     <Form.Item
-                        label={urlId.charAt(urlId.length-1) == 0? '新增百分比': urlId.charAt(urlId.length-1) == 1?'新增台数':urlId.charAt(urlId.length-1) == 2?'新增核数':'新增百分比'}
+                        label="扩容比例"
                         name="扩容比例"
                         rules={[{ required: true }]}
                     >

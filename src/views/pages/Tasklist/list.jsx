@@ -49,7 +49,7 @@ export default class list extends Component {
     // list接口
     listport = () => {
         const link_id = window.location.href.split('?').length < 2 ? '' : window.location.href.split('?')[1].split('&')[0]
-        const urlsrr = link_id == '' ? `${APIURL}/task/taskField` : `${APIURL}/task/taskField?${link_id}`
+        const urlsrr = link_id == '' ? `${APIURL}/task/taskField` : `${APIURL}/task/taskField?link_id=${link_id}`
         axios.get(urlsrr).then(
             res => {
                 // 获取列表信息
@@ -72,7 +72,7 @@ export default class list extends Component {
     // 图表接口
     chartport = () => {
         const link_id = window.location.href.split('?').length < 2 ? '' : window.location.href.split('?')[1].split('&')[0]
-        const urls = link_id == '' ? `${APIURL}/task/taskGraphList` : `${APIURL}/task/taskGraphList?${link_id}`
+        const urls = link_id == '' ? `${APIURL}/task/taskGraphList` : `${APIURL}/task/taskGraphList?link_id=${link_id}`
         axios.get(urls).then(
             res => {
                 // 获取列表信息
@@ -398,8 +398,8 @@ export default class list extends Component {
                     type: 'pie',
                     radius: '50%',
                     data: [
-                        { value: this.state.success_fail_data.all_succ_num, name:'成功'+'('+this.state.success_fail_data.all_succ_num + ')' },
-                        { value: this.state.success_fail_data.all_fail_num, name:'失败'+'('+this.state.success_fail_data.all_fail_num + ')' }
+                        { value: this.state.success_fail_data.all_succ_num, name: '成功' },
+                        { value: this.state.success_fail_data.all_fail_num, name: '失败' }
                     ],
                     emphasis: {
                         itemStyle: {
@@ -482,7 +482,7 @@ export default class list extends Component {
         this.setState({ id: e.target.value })
     }
     paging = (current, pageSize) => {
-        const urlsrr = `${APIURL}/task/taskField`
+        const urlsrr = `${APIURL}/taskInsertDb/taskField`
         let paramsr = {}
         if (this.state.status != null && this.state.status != 'ALL') {
             paramsr['status'] = this.state.status
@@ -512,7 +512,7 @@ export default class list extends Component {
             params: paramsr
         }).then(
             res => {
-                let data = Object.assign({}, { data: res.data.task_list }, { count: res.data.page_data.total_num })
+                let data = Object.assign({}, { data: res.data.task_list[0] }, { count: res.data.task_list[1].total_num })
                 this.setState((prevState, props) => ({
                     dataSource: data,
                 }));
@@ -566,12 +566,12 @@ export default class list extends Component {
             },
             {
                 title: '服务',
-                dataIndex: ["app_server"],
+                dataIndex: ["app", "server"],
                 key: 'address',
                 width: 150,
                 render: (text, record) => {
                     return <div>
-                        <p>{record.app_server}</p>
+                        <p>{record.app}.{record.server}</p>
                     </div>
                 }
             },
@@ -615,7 +615,7 @@ export default class list extends Component {
                 width: 70,
                 render: (text, record) => {
                     return <div>
-                            {(record.succ_rate * 100).toFixed(2)}%
+                        {record.succ_rate * 100}%
                     </div>
                 }
             },
@@ -632,21 +632,15 @@ export default class list extends Component {
                 width: 120,
             },
             {
-                title: '操作人',
-                dataIndex: 'add_user',
-                key: 'caozuoren',
-                width: 120,
-            },
-            {
                 title: '操作',
-                dataIndex: ['operate','task_no'],
+                dataIndex: 'operate',
                 key: 'operate',
                 width: 120,
                 render: (text, record) => {
                     return <div>
-                        {record.task_no == '--'? '--':<Link to={{ pathname: `/Details`, search: record.task_no }} target="_blank">
+                        <Link to={{ pathname: `/Details`, search: record.task_no }} target="_blank">
                             查看
-                        </Link>}
+                        </Link>
                     </div>
                 }
             },
@@ -733,7 +727,6 @@ export default class list extends Component {
                                     '近一周': [moment().subtract(7, 'days').startOf('day'), moment().endOf('day')],
                                     '近一个月': [moment().subtract(30, 'days').startOf('day'), moment().endOf('day')]
                                 }}
-                                defaultValue={[moment(moment().subtract(7, 'days').startOf('day'), 'YYYY-MM-DD'), moment( moment().endOf('day'), 'YYYY-MM-DD')]}
                                 format="YYYY-MM-DD"
                                 onChange={this.date}
                                 allowClear={true}

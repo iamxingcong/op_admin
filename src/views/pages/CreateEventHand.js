@@ -57,7 +57,7 @@ class CreateEventHand extends React.Component {
             capacity_quota: "",
             unit_capacity: 0,
             capacity_pre_value: 0.0,
-            reduce_time: 0,
+            delay_time: 0,
             link_info: null,
             alink_info: null,
             blink_info: null,
@@ -73,7 +73,6 @@ class CreateEventHand extends React.Component {
 
         this.onChangetm = this.onChangetm.bind(this)
         this.onChangetmb = this.onChangetmb.bind(this)
-        this.onChangetmc = this.onChangetmc.bind(this);
         this.onOk = this.onOk.bind(this)
         this.onChangea = this.onChangea.bind(this)
         this.linkinfcarray = this.linkinfcarray.bind(this)
@@ -252,7 +251,7 @@ class CreateEventHand extends React.Component {
             
             event_users: values.event_users,
             reduce_type: values.reduce_type,
-         
+            reduce_time: values.reduce_time,
             pid: values.pid,
             event_desc: values.event_desc,
 
@@ -263,7 +262,7 @@ class CreateEventHand extends React.Component {
             capacity_quota: values.capacity_quota,
             unit_capacity: values.unit_capacity,
             capacity_pre_value: values.capacity_pre_value,
-            
+            delay_time: values.delay_time,
             link_info: templinkar,
 
 
@@ -304,12 +303,6 @@ class CreateEventHand extends React.Component {
 
         })
          
-    }
-
-    onChangetmc(ts, ta){
-        this.setState({
-            reduce_time: ta,
-        })
     }
 
     onChangetm(ts, ta) {
@@ -382,11 +375,16 @@ class CreateEventHand extends React.Component {
         if (v.capacity_pre_value) {
             bodyFormData.append("capacity_pre_value", v.capacity_pre_value);
         }
-        if (v.reduce_time) {
-            bodyFormData.append("reduce_time", this.state.reduce_time);
+        if (v.delay_time) {
+            bodyFormData.append("delay_time", v.delay_time);
         }
- 
-   
+
+        if (v.reduce_time) {
+            bodyFormData.append("reduce_time", v.reduce_time);
+        }
+        if (v.reduce_type) {
+            bodyFormData.append("reduce_type", v.reduce_type);
+        }
         if (v.expand_max_rate) {
             bodyFormData.append("expand_max_rate", v.expand_max_rate);
         }
@@ -694,9 +692,9 @@ class CreateEventHand extends React.Component {
 
                         {this.state.event_type == 1 ? (
                             <Row>
-                                <Col span={8}>
+                                <Col span={12}>
                                     <Form.Item
-                                        label="事件开始时间"
+                                        label="开始时间"
                                         name="start_time"
                                         rules={[{ required: true }]}
                                     >
@@ -705,27 +703,15 @@ class CreateEventHand extends React.Component {
                                     </Form.Item>
 
                                 </Col>
-                                <Col span={8}>
+                                <Col span={12}>
                                     <Form.Item
-                                        label="事件结束时间"
+                                        label="结束时间"
                                         name="end_time"
                                         rules={[{ required: true }]}
 
                                     >
 
                                         <DatePicker format="YYYY-MM-DD HH:mm:ss" showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }} onChange={this.onChangetmb} onOk={this.onOk} />
-                                    </Form.Item>
-
-                                </Col>
-                                <Col span={8}>
-                                    <Form.Item
-                                        label="事件缩容时间"
-                                        name="reduce_time"
-                                        rules={[{ required: true }]}
-
-                                    >
-
-                                        <DatePicker format="YYYY-MM-DD HH:mm:ss" showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }} onChange={this.onChangetmc} onOk={this.onOk} />
                                     </Form.Item>
 
                                 </Col>
@@ -750,6 +736,7 @@ class CreateEventHand extends React.Component {
                                     <Form.Item
                                         label="运营指标"
                                         name="op_quota"
+                                        rules={[{ required: true }]}
                                     >
 
 
@@ -764,6 +751,7 @@ class CreateEventHand extends React.Component {
                                     <Form.Item
                                         label="预估值(万)"
                                         name="op_pre_value"
+                                        rules={[{ required: true }]}
                                     >
                                         <InputNumber />
                                     </Form.Item>

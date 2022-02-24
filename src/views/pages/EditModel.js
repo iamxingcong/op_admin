@@ -77,22 +77,6 @@ class EditModel extends React.Component {
     }
 
   
-    getCookie(cname) {
-        let name = cname + "=";
-        let decodedCookie = decodeURIComponent(document.cookie);
-        let ca = decodedCookie.split(';');
-        for(let i = 0; i <ca.length; i++) {
-          let c = ca[i];
-          while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-          }
-          if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-          }
-        }
-        return "";
-      }
-
 
     async updatemdoe(v) {
 
@@ -106,11 +90,6 @@ class EditModel extends React.Component {
         let url = `${APIURL}/capacityModel/editModel`;
 
         let bodyFormData = new FormData();
-
-        let user_name = this.getCookie("EngName");
-        bodyFormData.append("create_user", user_name);
-        
-
         bodyFormData.append("link_id", this.props.id);
 
         
@@ -453,19 +432,18 @@ class EditModel extends React.Component {
 
 
                                        
-                                        {/*                                                  
+                                                 
                                         <Form.Item label="超出阈值是否报警" name="is_warn" valuePropName="checked">
                                             <Switch onChange={this.is_warnChange} checked={true} />
 
                                           
                                         </Form.Item>
-                                         */}
 
                                         
 
 
                                         {  this.props.moddetail.is_warn == 1 && this.state.is_warn !== 1 &&   this.state.is_warn !== 0 ? (
-                                               <div id="displaynone">
+                                               <div>
 
 
                                                
@@ -539,7 +517,7 @@ class EditModel extends React.Component {
 
 
                                 {this.state.is_warn == 1 ? (
-                                               <div id="displaynone">
+                                               <div>
 
 
                                                

@@ -1,11 +1,11 @@
   
 import React from 'react';
- 
-import {  Card,   Button ,Select, Row, DatePicker, Col, Table , Spin, Tabs,  Form , Modal , Tooltip, notification, Input, Radio, Space , Popover} from 'antd';
- 
+import {  Card,   Button ,Select, Row, DatePicker, Col, Table , Spin, Tabs,  Form , Modal , Tooltip, notification, Input,  } from 'antd';
+
  
 import { LoadingOutlined , CheckCircleOutlined, QuestionCircleOutlined , CloseCircleOutlined, CopyOutlined, ToTopOutlined,CloudDownloadOutlined, } from '@ant-design/icons';
 
+ 
  
 import {  withRouter } from 'react-router-dom';
  
@@ -67,7 +67,6 @@ class CapacityList extends React.Component {
             currentTime: '',
             fileuploadModalVisible: false,
             filenames: null,
-            way: 1
         }
     
         this.capacityModeladdModel = this.capacityModeladdModel.bind(this);
@@ -138,9 +137,9 @@ class CapacityList extends React.Component {
     handleCancel = () => {
         this.setState({ isModalVisible: false })
     };
-    way = (e) => {
-        console.log(e.target.value);
-        this.setState({ way: e.target.value })
+    way = (v) => {
+        console.log(v);
+        this.setState({ way: v })
     }
 
  
@@ -228,25 +227,6 @@ class CapacityList extends React.Component {
          
     }
 
-
-    getCookie(cname) {
-        let name = cname + "=";
-        let decodedCookie = decodeURIComponent(document.cookie);
-        let ca = decodedCookie.split(';');
-        for(let i = 0; i <ca.length; i++) {
-          let c = ca[i];
-          while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-          }
-          if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-          }
-        }
-        return "";
-      }
-
-
-      
    async fileuploadapi(){
     
     
@@ -270,8 +250,7 @@ class CapacityList extends React.Component {
 
         bodyFormData.append("form_data", selectedFile);
         bodyFormData.append("link_id", id);
-        let user_name = this.getCookie("EngName");
-        bodyFormData.append("user_name", user_name);
+
         
         let that = this;
 
@@ -1264,7 +1243,7 @@ class CapacityList extends React.Component {
                     clms.push(ottop)
 
  
-              
+                    console.log(clms);
 
                  
                     that.setState({
@@ -1538,48 +1517,7 @@ class CapacityList extends React.Component {
                     
         }
 
-
-        const dropdownx = (data) => {
-
-
-        
  
-
-        if(  data.top5 && data.top5.length >= 1 )   {
-
-            const oks = data.top5.map((itm, i) => {
-                return (
-                    <div className="motlancopy" key={i}>
-                        <CopyOutlined onClick={() => this.paste(itm)} />
-                        <span> {itm} </span>
-                    </div>
-                )
-                 
-            })
-
-            return <>   
-                        <span className="leftflt">
-                            {Number(data.max_cpu).toLocaleString()}
-                        </span> 
-                        <Popover content={oks} title="最大cpu机器top5">
-                            <div className="littlewwrap"> top5 </div>
-                        </Popover>
-
-                </>
-        }else{
-            return <>   
-                <span className="leftflt">
-                    {Number(data.max_cpu).toLocaleString()}
-                </span> 
-                
-                </>
-        }
-
-                
-            
-          
-        }
-  
         ottnmoc =  {
             title: '展开/折叠',
             dataIndex: '',
@@ -1642,7 +1580,7 @@ class CapacityList extends React.Component {
                 render: (text, data) => (
                     
                     <Tooltip  placement="topLeft"  title={data.app_server}>
-                        <a rel="noopener noreferrer"  href={`http://123.woa.com/v2/formal#/server-manage/index?app=${data.app}&server=${data.server}`} target="_blank"> 
+                        <a rel="noopener noreferrer"  href={`http://123.woa.com/v2/formal#/server-manage/index?app=${data.app}&server=${data.app_server}`} target="_blank"> 
                         
                         <i>
                             {data.app_server}
@@ -1664,7 +1602,7 @@ class CapacityList extends React.Component {
                 title: "set",
                 dataIndex: "set",
                 align: "left",
-                width: 150,
+                width: 60,
             },
             {
                 title: "总访问量/分",
@@ -1722,38 +1660,67 @@ class CapacityList extends React.Component {
                 dataIndex: "cpu",
                 sorter: (a, b) => a.cpu - b.cpu,
                 align: "left",
-                width: 120,
+                width: 170,
                 render: (text, data) => (
 
-                    
-                        text 
-                       
-                   
+                    <>
+                        <span className="leftflt"> {text} </span>
+                        {data.top5 && data.top5.length >= 1 ? (
+                            <div className="littlewwrap">
+
+                           
+
+                                <Tooltip title={`最大cpu机器top5`}>
+                                    top5 
+                               
+                                </Tooltip>
+
+                                <div className="clipboard">
+
+                                    {data.top5.map((itm, i) => {
+                                        return (
+                                            <div className="motlancopy" key={i}>
+                                                <CopyOutlined onClick={() => this.paste(itm)} />
+                                                <span> {itm} </span>
+                                            </div>
+                                        )
+                                         
+                                    })}
+                                     
+                                   
+                                </div>
+                                </div>
+
+                        ) : ""}
+                    </>
                 )
             },
 
-            // {
-            //     title: "容量",
-            //     dataIndex: "water_line",
-            //     sorter: (a, b) => a.water_line - b.water_line,
-            //     align: "left",
-            //     width: 180,
-            //     render: (text, data) => (
-            //         <div className="ceepolls">
-            //             <i className="batteryb" style={{width: text+"%"}}>  </i>
+            {
+                title: "容量",
+                dataIndex: "water_line",
+                sorter: (a, b) => a.water_line - b.water_line,
+                align: "left",
+                width: 180,
+                render: (text, data) => (
+                    <div className="ceepolls">
+                        <i className="batteryb" style={{width: text+"%"}}>  </i>
                        
                        
-            //         </div>
-            //     )
+                    </div>
+                )
                     
-            // },
+            },
             {
                 title: "cpu峰值使用率(%)",
                 dataIndex: "max_cpu",
                 sorter: (a, b) => a.max_cpu - b.max_cpu,
                 align: "left",
-                width: 170,
-                render:(text, data) => dropdownx(data)
+                width: 120,
+                render:(text, data) => (
+
+                    Number(text).toLocaleString()
+                )
             },
             {
                 title: "总容器数",
@@ -1762,11 +1729,8 @@ class CapacityList extends React.Component {
                 align: "left",
                 width: 170,
                 render:(text, data) => (
-                     
-                     Number(text).toLocaleString()
 
-                    
-
+                    Number(text).toLocaleString()
                 )
             },
             {
@@ -2201,26 +2165,27 @@ class CapacityList extends React.Component {
 
       
                
+ 
                     <div className='btn3'>
 
 
-                            <Button type="primary" onClick={this.showModal}>
-                                扩容
-                            </Button>
-                            <Modal title="请选择扩容方式" visible={this.state.isModalVisible} onOk={this.qweq} onCancel={this.handleCancel}>
-                            
-                                <Radio.Group onChange={this.way} value={this.state.way}>
-                                    <Space direction="vertical">
-                                        <Radio value={1}>以台数扩容</Radio>
-                                        <Radio value={2}>以核数扩容</Radio>
-                                        <Radio value={0}>以百分比扩容</Radio>
-                                    </Space>
-                                </Radio.Group>
-                            </Modal>
-                            <Button type="primary" disabled className="btn2">
-                                缩容
-                            </Button>
-                         </div>
+                        <Button type="primary" onClick={this.showModal}>
+                            扩容
+                        </Button>
+                        <Modal title="请选择扩容方式" visible={this.state.isModalVisible} onOk={this.qweq} onCancel={this.handleCancel}>
+                            <Select defaultValue="按比例扩容" style={{ width: 120 }} onChange={this.way}>
+                                <Option value="0">按比例扩容</Option>
+                                <Option value="1">根据数量扩容</Option>
+                                <Option value="2">根据核数扩容 </Option>
+                                <Option value="3" disabled>
+                                    按水位线方式扩容
+                                </Option>
+                            </Select>
+                        </Modal>
+                        <Button type="primary" disabled className="btn2">
+                            缩容
+                        </Button>
+                        </div>
  
                 
  

@@ -77,7 +77,6 @@ class EditEvent extends React.Component {
 
         this.onChangetm = this.onChangetm.bind(this)
         this.onChangetmb = this.onChangetmb.bind(this)
-        this.onChangetmc = this.onChangetmc.bind(this);
         this.onOk = this.onOk.bind(this)
         this.onChangea = this.onChangea.bind(this)
 
@@ -272,11 +271,6 @@ class EditEvent extends React.Component {
         })
        
     }
-    onChangetmc(ts, ta){
-        this.setState({
-            reduce_time: ta,
-        })
-    }
 
     onChangetm(ts, ta) {
        
@@ -330,9 +324,6 @@ class EditEvent extends React.Component {
             bodyFormData.append("end_time", this.state.end_time);
         }
 
-        if(this.state.reduce_time){
-            bodyFormData.append("reduce_time", this.state.reduce_time);
-        }
         if(this.state.op_url){
             bodyFormData.append("op_url", this.state.op_url);
         }
@@ -752,7 +743,6 @@ class EditEvent extends React.Component {
                                 op_pre_value: this.props.detail.op_pre_value,
                                 expand_max_rate: this.props.detail.expand_max_rate,
                                 end_time: moment(this.props.detail.end_time),
-                                reduce_time: moment(this.props.detail.reduce_time),
                                 start_time: moment(this.props.detail.start_time),
                                 op_quota: this.props.detail.op_quota,
                                 unit_capacity: this.props.detail.unit_capacity,
@@ -832,9 +822,9 @@ class EditEvent extends React.Component {
 
                             {this.props.detail.event_type == 1 ? (
                                 <Row>
-                                    <Col span={8}>
+                                    <Col span={12}>
                                         <Form.Item
-                                            label="事件开始时间"
+                                            label="开始时间"
                                             name="start_time"
                                            
                                         >
@@ -843,25 +833,14 @@ class EditEvent extends React.Component {
                                         </Form.Item>
 
                                     </Col>
-                                    <Col span={8}>
+                                    <Col span={12}>
                                         <Form.Item
-                                            label="事件结束时间"
+                                            label="结束时间"
                                             name="end_time"
                                            
                                         >
 
                                             <DatePicker format="YYYY-MM-DD HH:mm:ss" showTime onChange={this.onChangetmb} onOk={this.onOk} />
-                                        </Form.Item>
-
-                                    </Col>
-                                    <Col span={8}>
-                                        <Form.Item
-                                            label="事件缩容时间"
-                                            name="reduce_time"
-                                           
-                                        >
-
-                                            <DatePicker format="YYYY-MM-DD HH:mm:ss" showTime onChange={this.onChangetmc} onOk={this.onOk} />
                                         </Form.Item>
 
                                     </Col>
